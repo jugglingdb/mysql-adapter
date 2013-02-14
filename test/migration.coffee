@@ -62,7 +62,7 @@ it 'should run migration', (test) ->
                 test.deepEqual fields,
                     id:
                         Field: 'id'
-                        Type: 'int(11)'
+                        Type: 'int(10) unsigned'
                         Null: 'NO'
                         Key: 'PRI'
                         Default: null
@@ -83,7 +83,7 @@ it 'should run migration', (test) ->
                         Extra: '' 
                     bio:
                         Field: 'bio'
-                        Type: 'text'
+                        Type: 'mediumtext'
                         Null: 'YES'
                         Key: ''
                         Default: null
@@ -111,7 +111,7 @@ it 'should run migration', (test) ->
                         Extra: ''
                     createdByAdmin:
                         Field: 'createdByAdmin'
-                        Type: 'tinyint(1)'
+                        Type: 'tinyint(1) unsigned'
                         Null: 'YES'
                         Key: ''
                         Default: null
