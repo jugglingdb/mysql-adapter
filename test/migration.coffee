@@ -24,6 +24,7 @@ User = schema.define 'User',
 ,   indexes:
       index1:
         columns: 'email, createdByAdmin'
+    table: 'user'
 
 MySQLTypeTest = schema.define 'MySQLTypeTest',
     char_field: schema.types.Char
@@ -142,8 +143,8 @@ it 'should run migration', (test) ->
             # Once gain, getIdexes truncates multi-key indexes to the first member. Hence index1 is correct.
             getIndexes 'User', (err, fields) ->
                 test.deepEqual fields,
-                    PRIMARY: 
-                        Table: 'User'
+                    PRIMARY:
+                        Table: 'user'
                         Non_unique: 0
                         Key_name: 'PRIMARY'
                         Seq_in_index: 1
@@ -156,8 +157,8 @@ it 'should run migration', (test) ->
                         Index_type: 'BTREE'
                         Comment: ''
                         Index_comment: ''
-                    email: 
-                        Table: 'User'
+                    email:
+                        Table: 'user'
                         Non_unique: 1
                         Key_name: 'email'
                         Seq_in_index: 1
@@ -170,8 +171,8 @@ it 'should run migration', (test) ->
                         Index_type: 'BTREE'
                         Comment: ''
                         Index_comment: ''
-                    index1: 
-                        Table: 'User'
+                    index1:
+                        Table: 'user'
                         Non_unique: 1
                         Key_name: 'index1'
                         Seq_in_index: 1
