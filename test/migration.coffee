@@ -27,26 +27,26 @@ User = schema.define 'User',
     table: 'user'
 
 MySQLTypeTest = schema.define 'MySQLTypeTest',
-    char_field: schema.types.Char
-    float_field: schema.types.Float,
-    int_field: schema.types.Int,
-    uint_field: schema.types.Uint,
-    small_int: schema.types.SmallInt,
-    small_uint: schema.types.SmallUint,
-    tiny_int: schema.types.TinyInt,
-    tiny_uint: schema.types.TinyUint,
-    enum_field: { type: schema.types.Enum, choices: ['rock', 'paper', 'scissors'] },
-    set_field: { type: schema.types.Set, members: ['dog', 'cat', 'mouse'] },
-    decimal_field: { type: schema.types.Decimal, limit: [9,5] },
+    char_field: Schema.types.Char
+    float_field: Schema.types.Float,
+    int_field: Schema.types.Int,
+    uint_field: Schema.types.Uint,
+    small_int: Schema.types.SmallInt,
+    small_uint: Schema.types.SmallUint,
+    tiny_int: Schema.types.TinyInt,
+    tiny_uint: Schema.types.TinyUint,
+    enum_field: { type: Schema.types.Enum, choices: ['rock', 'paper', 'scissors'] },
+    set_field: { type: Schema.types.Set, members: ['dog', 'cat', 'mouse'] },
+    decimal_field: { type: Schema.types.Decimal, limit: [9,5] },
     
 # If you don't have mysql version >= 5.6.x you can't have both Updated and Created in the same model.
 MySQLCreated = schema.define 'MySQLCreated',
     text: String
-    created_field: schema.types.Created
+    created_field: Schema.types.Created
     
 MySQLUpdated = schema.define 'MySQLUpdated',
     text: String
-    updated_field: schema.types.Updated
+    updated_field: Schema.types.Updated
 
 
 withBlankDatabase = (cb) ->

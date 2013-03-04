@@ -1,10 +1,13 @@
+
 var jdb = require('jugglingdb'),
     Schema = jdb.Schema,
     test = jdb.test,
     schema = new Schema(__dirname + '/..', {
         database: 'myapp_test',
-        username: 'root'
+        username: '',
+        password: ''
     });
+
 
 test(module.exports, schema);
 
@@ -25,4 +28,5 @@ test.it('hasMany should support additional conditions', function (test) {
     });
 
 });
+
 
