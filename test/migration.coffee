@@ -33,20 +33,20 @@ MySQLTypeTest = schema.define 'MySQLTypeTest',
     uint_field: Schema.types.Uint,
     small_int: Schema.types.SmallInt,
     small_uint: Schema.types.SmallUint,
+    medium_uint: Schema.types.MediumUint,
+    medium_int: Schema.types.MediumInt,
     tiny_int: Schema.types.TinyInt,
     tiny_uint: Schema.types.TinyUint,
-    enum_field: { type: Schema.types.Enum, choices: ['rock', 'paper', 'scissors'] },
-    set_field: { type: Schema.types.Set, members: ['dog', 'cat', 'mouse'] },
     decimal_field: { type: Schema.types.Decimal, limit: [9,5] },
     
 # If you don't have mysql version >= 5.6.x you can't have both Updated and Created in the same model.
 MySQLCreated = schema.define 'MySQLCreated',
     text: String
-    created_field: Schema.types.Created
+    created_field: { type: Schema.types.Timestamp, default: 'CURRENT_TIMESTAMP', allowNull: false }
     
 MySQLUpdated = schema.define 'MySQLUpdated',
     text: String
-    updated_field: Schema.types.Updated
+    updated_field: { type: Schema.types.Timestamp, onUpdate: 'CURRENT_TIMESTAMP', default: 'CURRENT_TIMESTAMP', allowNull: false }
 
 
 withBlankDatabase = (cb) ->
@@ -107,7 +107,7 @@ it 'should run migration', (test) ->
                         Extra: '' 
                     bio:
                         Field: 'bio'
-                        Type: 'mediumtext'
+                        Type: 'text'
                         Null: 'YES'
                         Key: ''
                         Default: null
@@ -237,6 +237,20 @@ it 'should run migration', (test) ->
                         Key: ''
                         Default: null
                         Extra: ''
+                    medium_uint: 
+                        Field: 'medium_uint'
+                        Type: 'mediumint(8) unsigned'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    medium_int: 
+                        Field: 'medium_int'
+                        Type: 'mediumint(7)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
                     tiny_int:
                         Field: 'tiny_int'
                         Type: 'tinyint(3)'
@@ -247,20 +261,6 @@ it 'should run migration', (test) ->
                     tiny_uint: 
                         Field: 'tiny_uint'
                         Type: 'tinyint(3) unsigned'
-                        Null: 'YES'
-                        Key: ''
-                        Default: null
-                        Extra: ''
-                    enum_field: 
-                        Field: 'enum_field'
-                        Type: 'enum(\'rock\',\'paper\',\'scissors\')'
-                        Null: 'YES'
-                        Key: ''
-                        Default: null
-                        Extra: ''
-                    set_field: 
-                        Field: 'set_field'
-                        Type: 'set(\'dog\',\'cat\',\'mouse\')'
                         Null: 'YES'
                         Key: ''
                         Default: null
@@ -407,32 +407,6 @@ it 'test', (test) ->
             User.schema.autoupdate (err) ->
                 test.done()
 
-it 'should have sane sets and enums', (test) ->
-    MySQLTypeTest.create
-        enum_field: 'rock'
-        set_field: 'dog,cat'
-        tiny_int: 3
-        small_int: 50
-        char_field: 'chars',
-        (err, obj) ->
-            test.ok (obj.enum_field == 'rock'), 'Save failed'
-            test.ok (obj.tiny_int == 3), 'Save failed'
-            test.ok (obj.id > 0), 'Save failed'
-            MySQLTypeTest.findOne {id: obj.id}, (err, obj) ->
-                test.ok (obj.id > 0), 'Retrieval failed.'
-                test.ok (obj.tiny_int == 3), 'TinyInt not stored'
-                test.ok (obj.char_field == 'chars'), 'Char field not stored'
-                test.ok (obj.enum_field == 'rock'), 'Enum not stored'
-                test.ok (obj.set_field == 'dog,cat'), 'Set not stored'
-                obj.set_field = 'cat,mouse,owl'
-                # Side note: owl not in schema. 
-                # It will still save, but not with the owl.
-                obj.save (err, obj) ->
-                    # Since save succeeded, value out of sync.
-                    MySQLTypeTest.findOne {id: obj.id}, (err, obj) ->
-                        test.ok (obj.set_field == 'cat,mouse'), 'Not expected behavior'
-                        test.done()
-
 it 'should have automatic dates', (test) ->
     # When DB changes the value, it's not propogated to model unless refreshed.
     # Time has minimum SQL res of 1 sec, so we have to wait.
@@ -444,17 +418,19 @@ it 'should have automatic dates', (test) ->
                 obj.updateAttributes {text : 'c_message_2'}, (err, new_obj) ->
                     MySQLCreated.findOne {id: new_obj.id}, (err, ret_obj) ->
                         test.ok (otext != ret_obj.text)
-                        test.ok (ocreate.toString() == ret_obj.created_field.toString()), "Created date has changed"
+                        test.ok (ocreate.toString() == ret_obj.created_field.toString()), "Created date has changed unexpectedly"
             , 1000)
     MySQLUpdated.create {text: 'u_message_1'}, (err,obj) ->
         MySQLUpdated.findOne {id: obj.id}, (err,obj) ->
             otext = obj.text
             oupdate = obj.updated_field
             setTimeout(()->
-                obj.updateAttributes {text: 'u_message_2'}, (err, new_obj) ->
-                    MySQLUpdated.findOne {id: new_obj.id}, (err, ret_obj) ->
-                        test.ok (otext != ret_obj.text)
-                        test.ok (oupdate.toString() != ret_obj.updated_field.toString()), "Updated date has not changed"
+                MySQLUpdated.updateOrCreate {id: obj.id, text: 'u_message_2'}, (err, ret_obj) ->
+                    ret_obj.reload (err, fin_obj) ->
+                        test.ok (otext != fin_obj.text)
+                        test.ok ('u_message_2' == fin_obj.text)
+                        test.ok (oupdate.toString() != fin_obj.updated_field.toString()), "Updated date hasn't changed as expected"
+                        test.ok (oupdate.getTime() < fin_obj.updated_field.getTime()), "Updated date isn't relatively correct"
                         test.done()
             , 1000)
     
