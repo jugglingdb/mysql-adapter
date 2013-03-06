@@ -3,7 +3,7 @@ Schema = juggling.Schema
 Text = Schema.Text
 
 DBNAME = 'myapp_test'
-DBUSER = ''
+DBUSER = 'root'
 DBPASS = ''
 DBENGINE = 'mysql'
 
