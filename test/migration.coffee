@@ -25,6 +25,29 @@ User = schema.define 'User',
       index1:
         columns: 'email, createdByAdmin'
 
+MySQLTypeTest = schema.define 'MySQLTypeTest',
+    char_field: Schema.types.Char
+    float_field: Schema.types.Float,
+    int_field: Schema.types.Int,
+    uint_field: Schema.types.Uint,
+    small_int: Schema.types.SmallInt,
+    small_uint: Schema.types.SmallUint,
+    medium_uint: Schema.types.MediumUint,
+    medium_int: Schema.types.MediumInt,
+    tiny_int: Schema.types.TinyInt,
+    tiny_uint: Schema.types.TinyUint,
+    decimal_field: { type: Schema.types.Decimal, limit: [9,5] },
+    
+# If you don't have mysql version >= 5.6.x you can't have both Updated and Created in the same model.
+MySQLCreated = schema.define 'MySQLCreated',
+    text: String
+    created_field: { type: Schema.types.Timestamp, default: 'CURRENT_TIMESTAMP', allowNull: false }
+    
+MySQLUpdated = schema.define 'MySQLUpdated',
+    text: String
+    updated_field: { type: Schema.types.Timestamp, onUpdate: 'CURRENT_TIMESTAMP', default: 'CURRENT_TIMESTAMP', allowNull: false }
+
+
 withBlankDatabase = (cb) ->
     db = schema.settings.database = DBNAME
     query 'DROP DATABASE IF EXISTS ' + db, (err) ->
@@ -62,7 +85,7 @@ it 'should run migration', (test) ->
                 test.deepEqual fields,
                     id:
                         Field: 'id'
-                        Type: 'int(11)'
+                        Type: 'int(10) unsigned'
                         Null: 'NO'
                         Key: 'PRI'
                         Default: null
@@ -104,14 +127,14 @@ it 'should run migration', (test) ->
                         Extra: ''
                     pendingPeriod:
                         Field: 'pendingPeriod'
-                        Type: 'int(11)'
+                        Type: 'float'
                         Null: 'YES'
                         Key: ''
                         Default: null
                         Extra: ''
                     createdByAdmin:
                         Field: 'createdByAdmin'
-                        Type: 'tinyint(1)'
+                        Type: 'tinyint(1) unsigned'
                         Null: 'YES'
                         Key: ''
                         Default: null
@@ -161,8 +184,142 @@ it 'should run migration', (test) ->
                         Index_type: 'BTREE'
                         Comment: ''
                         Index_comment: ''
+            # Check that additional MySQL specific field types get created.
+            getFields 'MySQLTypeTest', (err, fields) ->
+                test.deepEqual fields,
+                    id: 
+                        Field: 'id'
+                        Type: 'int(10) unsigned'
+                        Null: 'NO'
+                        Key: 'PRI'
+                        Default: null
+                        Extra: 'auto_increment'
+                    char_field: 
+                        Field: 'char_field'
+                        Type: 'char(255)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    float_field: 
+                        Field: 'float_field'
+                        Type: 'float'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    int_field: 
+                        Field: 'int_field'
+                        Type: 'int(11)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    uint_field: 
+                        Field: 'uint_field'
+                        Type: 'int(10) unsigned'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    small_int: 
+                        Field: 'small_int'
+                        Type: 'smallint(5)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    small_uint: 
+                        Field: 'small_uint'
+                        Type: 'smallint(5) unsigned'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    medium_uint: 
+                        Field: 'medium_uint'
+                        Type: 'mediumint(8) unsigned'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    medium_int: 
+                        Field: 'medium_int'
+                        Type: 'mediumint(7)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    tiny_int:
+                        Field: 'tiny_int'
+                        Type: 'tinyint(3)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    tiny_uint: 
+                        Field: 'tiny_uint'
+                        Type: 'tinyint(3) unsigned'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    decimal_field: 
+                        Field: 'decimal_field'
+                        Type: 'decimal(9,5)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+            # updated and created are separate in case you aren't up to date on MySQL.
+            getFields 'MySQLCreated', (err, fields) ->
+                test.deepEqual fields,
+                    id: 
+                        Field: 'id'
+                        Type: 'int(10) unsigned'
+                        Null: 'NO'
+                        Key: 'PRI'
+                        Default: null
+                        Extra: 'auto_increment'
+                    text: 
+                        Field: 'text'
+                        Type: 'varchar(255)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    created_field: 
+                        Field: 'created_field'
+                        Type: 'timestamp'
+                        Null: 'NO'
+                        Key: ''
+                        Default: 'CURRENT_TIMESTAMP'
+                        Extra: ''
+            getFields 'MySQLUpdated', (err, fields) ->
+                test.deepEqual fields,
+                    id: 
+                        Field: 'id'
+                        Type: 'int(10) unsigned'
+                        Null: 'NO'
+                        Key: 'PRI'
+                        Default: null
+                        Extra: 'auto_increment'
+                    text: 
+                        Field: 'text'
+                        Type: 'varchar(255)'
+                        Null: 'YES'
+                        Key: ''
+                        Default: null
+                        Extra: ''
+                    updated_field:
+                        Field: 'updated_field'
+                        Type: 'timestamp'
+                        Null: 'NO'
+                        Key: ''
+                        Default: 'CURRENT_TIMESTAMP'
+                        Extra: 'on update CURRENT_TIMESTAMP'
                 test.done()
-
+                                
 it 'should autoupgrade', (test) ->
     userExists = (cb) ->
         query 'SELECT * FROM User', (err, res) ->
@@ -185,7 +342,7 @@ it 'should autoupgrade', (test) ->
                     # add new column
                     test.ok fields.newProperty, 'New column was not added'
                     if fields.newProperty
-                        test.equal fields.newProperty.Type, 'int(11)', 'New column type is not int(11)'
+                        test.equal fields.newProperty.Type, 'float', 'New column type is not float'
                     # drop column
                     test.ok not fields.pendingPeriod, 'drop column'
 
@@ -196,12 +353,13 @@ it 'should autoupgrade', (test) ->
 
 it 'should check actuality of schema', (test) ->
     # drop column
-    User.schema.isActual (err, ok) ->
+    User.schema.isActual (err, ok, code) ->
         test.ok ok, 'schema is actual'
         User.defineProperty 'email', false
         User.schema.isActual (err, ok) ->
             test.ok not ok, 'schema is not actual'
             test.done()
+            
 
 it 'should add single-column index', (test) ->
     User.defineProperty 'email', type: String, index: { kind: 'FULLTEXT', type: 'HASH'}
@@ -209,7 +367,6 @@ it 'should add single-column index', (test) ->
         return console.log(err) if err
         getIndexes 'User', (err, ixs) ->
             test.ok ixs.email && ixs.email.Column_name == 'email'
-            console.log(ixs)
             test.equal ixs.email.Index_type, 'BTREE', 'default index type'
             test.done()
 
@@ -242,13 +399,40 @@ it 'should update multi-column index when order of columns changed', (test) ->
                 test.equals ixs.index1.Column_name, 'createdByAdmin'
                 test.done()
 
-
 it 'test', (test) ->
     User.defineProperty 'email', type: String, index: true
     User.schema.autoupdate (err) ->
         User.schema.autoupdate (err) ->
             User.schema.autoupdate (err) ->
                 test.done()
+
+it 'should have automatic dates', (test) ->
+    # When DB changes the value, it's not propogated to model unless refreshed.
+    # Time has minimum SQL res of 1 sec, so we have to wait.
+    MySQLCreated.create {text: 'c_message_1'}, (err,obj) ->
+        MySQLCreated.findOne {id: obj.id}, (err,obj) ->
+            otext = obj.text
+            ocreate = obj.created_field
+            setTimeout(()->
+                obj.updateAttributes {text : 'c_message_2'}, (err, new_obj) ->
+                    MySQLCreated.findOne {id: new_obj.id}, (err, ret_obj) ->
+                        test.ok (otext != ret_obj.text)
+                        test.ok (ocreate.toString() == ret_obj.created_field.toString()), "Created date has changed unexpectedly"
+            , 1000)
+    MySQLUpdated.create {text: 'u_message_1'}, (err,obj) ->
+        MySQLUpdated.findOne {id: obj.id}, (err,obj) ->
+            otext = obj.text
+            oupdate = obj.updated_field
+            setTimeout(()->
+                MySQLUpdated.updateOrCreate {id: obj.id, text: 'u_message_2'}, (err, ret_obj) ->
+                    ret_obj.reload (err, fin_obj) ->
+                        test.ok (otext != fin_obj.text)
+                        test.ok ('u_message_2' == fin_obj.text)
+                        test.ok (oupdate.toString() != fin_obj.updated_field.toString()), "Updated date hasn't changed as expected"
+                        test.ok (oupdate.getTime() < fin_obj.updated_field.getTime()), "Updated date isn't relatively correct"
+                        test.done()
+            , 1000)
+    
 
 it 'should disconnect when done', (test) ->
     schema.disconnect()

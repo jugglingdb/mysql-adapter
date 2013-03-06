@@ -6,6 +6,7 @@ var jdb = require('jugglingdb'),
         username: 'root'
     });
 
+
 test(module.exports, schema);
 
 var Post, User;
@@ -25,4 +26,5 @@ test.it('hasMany should support additional conditions', function (test) {
     });
 
 });
+
 
