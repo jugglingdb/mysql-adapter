@@ -281,6 +281,31 @@ describe('migrations', function() {
         });
     });
 
+	it('record should be updated', function(done) {
+			var userExists = function(cb) {
+				query('SELECT * FROM UserData', function(err, res) {
+					cb(!err && res[0].email == 'yourname@newname.com');
+				});
+			}
+			UserData.update(  { where:{id:'1'}, update:{ email:'yourname@newname.com' }    }, function(err, o) {
+				userExists(function(yep) {
+                        assert.ok(yep, 'Email has changed');
+				});
+				
+				// err when where missing
+				UserData.update(  {	update:{ email:'yourname@newname.com' }    }, function(err, o) {
+					assert.equal(err, "Where or Update fields are missing", " no error when where field is missing ");
+				});
+				
+				// err when where update
+				UserData.update(  	{ where:{id:'1'}  }, function(err, o) {
+					assert.equal(err, "Where or Update fields are missing", " no error when update field is missing ");
+					done();
+				});
+				
+			});
+	});
+	
     it('should check actuality of schema', function(done) {
         // 'drop column'
         UserData.schema.isActual(function(err, ok) {
