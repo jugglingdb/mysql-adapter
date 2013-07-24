@@ -24,14 +24,24 @@ describe('basic-query-mysql', function() {
 			done();
 		});
 	});
+
 	it('should query collection where order is 1 or 5', function(done) {
-		UserData.all({where: { or: [{order: 1}, {order: 5}] }}, function(err, users) {
+		UserData.all({ where: { or: [{order: 1}, {order: 5}] }}, function(err, users) {
 			should.exists(users);
 			should.not.exists(err);
 			users.should.have.lengthOf(2);
 			done();
 		});
 	});
+
+    it('should query collection where name like Len', function(done) {
+        UserData.all({ where: { name: { like: '%Len%' }}}, function(err, users) {
+            should.exists(users);
+            should.not.exists(err);
+            users.should.have.lengthOf(1);
+            done();
+        });
+    });
 });
 
 function seed(done) {
