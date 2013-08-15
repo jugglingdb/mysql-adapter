@@ -108,6 +108,24 @@ The following type-dataType combinations are supported:
   * `{ mood: { type: MOOD }}`
   * `{ choice: { type: schema.EnumFactory('yes', 'no', 'maybe'), null: false }}`
 
+## Creating Multi-Column Indexes
+The mysql adapter supports the declaration of multi-column indexes on models via the the `indexes` option in the 3rd argument to `define`. 
+
+```javascript
+UserData = db.define('UserData', {
+        email: { type: String, null: false, index: true },
+        name: String,
+        bio: Schema.Text,
+        birthDate: Date,
+        pendingPeriod: Number,
+        createdByAdmin: Boolean,
+    } , { indexes: {
+            index0: {
+                columns: 'email, createdByAdmin'
+            }
+        }
+    });
+```
 
 ## MIT License
 
