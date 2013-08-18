@@ -281,7 +281,7 @@ describe('migrations', function() {
         });
     });
 
-	it('record should be updated', function(done) {
+    it('record should be updated', function(done) {
 			var userExists = function(cb) {
 				query('SELECT * FROM UserData', function(err, res) {
 					cb(!err && res[0].email == 'yourname@newname.com');
@@ -306,7 +306,7 @@ describe('migrations', function() {
 			});
 	});
 	
-    it('should check actuality of schema', function(done) {
+	it('should check actuality of schema', function(done) {
         // 'drop column'
         UserData.schema.isActual(function(err, ok) {
             assert.ok(ok, 'schema is not actual (should be)');
