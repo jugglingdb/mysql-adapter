@@ -113,6 +113,19 @@ describe('basic-query-mysql', function () {
       done();
     });
   });
+
+  it('should query collection using IN operation', function (done) {
+    UserData.all({
+      where : {
+        order : [ 4, 6 ]
+      }
+    }, function (err, users) {
+      should.exists(users);
+      should.not.exists(err);
+      users.should.have.lengthOf(2);
+      done();
+    });
+  });
 });
 
 function seed(done) {
