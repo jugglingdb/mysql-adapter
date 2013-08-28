@@ -150,9 +150,9 @@ Example
 The example below will look for items that have id 1, 4 or 6
 
 ```javascript
-    { where : 
-        id : [1,4,6]
-    }
+where : {
+    id : [1,4,6]
+}
 ```
 
 ## Creating Multi-Column Indexes
