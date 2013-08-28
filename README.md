@@ -108,6 +108,55 @@ The following type-dataType combinations are supported:
   * `{ mood: { type: MOOD }}`
   * `{ choice: { type: schema.EnumFactory('yes', 'no', 'maybe'), null: false }}`
 
+## Using OR and IN operator
+
+<h3>OR</h3>
+Mysql adapter now supports the or functionality. You can add an `or` array object to the where clause to join the arguments in the `or` array with an OR.
+    
+Example:
+This example selects all the animals whose name are Penny AND type is either cat OR size is medium
+
+```javascript
+where : {
+    name : 'Penny',
+    or : [ { type : 'cat'},
+           { size : 'medium'}
+    ]
+}
+```
+
+It's important to note that each object in the `or` array is treat as if it was in the "where" clause, thus you can create complex queries like this;
+
+Example:
+The example below selects all large white dogs OR all cats who are either small or black color
+
+```javascript
+where : {
+    or : [ { type : 'dog, color : 'white', size : 'large'},
+           { type : 'cat', or : [ { size : 'small'},
+                                  { color : 'black'}
+                                ]
+           }
+    ]
+}
+```
+
+SQL translation for the above would be: `WHERE (color = 'orange' OR cutenessLelvel = 'superHigh') AND (breed = 'shorthair AND (cutenessLevel = 'low' OR color = 'black))`
+
+<h3>IN</h3>
+
+IN operator is pretty straight forward. If you give any columns in the where clause an array, they will be interpreted to be an IN object
+
+Example
+
+The example below will look for items that have id 1, 4 or 6
+
+```javascript
+where : {
+    id : [1,4,6]
+}
+```
+
 ## Creating Multi-Column Indexes
 The mysql adapter supports the declaration of multi-column indexes on models via the the `indexes` option in the 3rd argument to `define`. 
 
