@@ -108,6 +108,32 @@ The following type-dataType combinations are supported:
   * `{ mood: { type: MOOD }}`
   * `{ choice: { type: schema.EnumFactory('yes', 'no', 'maybe'), null: false }}`
 
+## Using or operator
+Mysql adapter now supports the or functionality. You can add an `or` array object to the where clause to join the arguments in the `or` array with an OR.
+    
+    Example:
+
+```javascript
+where : {
+    name : 'Penny',
+    or : [ { type : 'cat'},
+           { breed : 'shorthair'}
+    ]
+}
+```
+
+It's important to note that each object in the `or` array is treat as if it was in the "where" clause, thus you can create complex queries like this;
+
+```javascript
+where : {
+    or : [ { color : 'orange', cutenessLevel : 'superHigh'},
+           { breed : 'shorthair', or : [ { cutenessLevel : 'low'},
+                                         { color : 'black'}]}
+    ]
+}
+```
+The example below selects cats where the color is orange and superHigh cuteness OR breed is shorthair and cutenesslevel is low or color is black
+
 ## Creating Multi-Column Indexes
 The mysql adapter supports the declaration of multi-column indexes on models via the the `indexes` option in the 3rd argument to `define`. 
 
