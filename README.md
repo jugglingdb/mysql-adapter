@@ -114,13 +114,13 @@ The following type-dataType combinations are supported:
 Mysql adapter now supports the or functionality. You can add an `or` array object to the where clause to join the arguments in the `or` array with an OR.
     
 Example:
-This example selects all the animals whose name are Penny AND type is either cat or their breed is shorthair
+This example selects all the animals whose name are Penny AND type is either cat OR size is medium
 
 ```javascript
 where : {
     name : 'Penny',
     or : [ { type : 'cat'},
-           { breed : 'shorthair'}
+           { size : 'medium'}
     ]
 }
 ```
@@ -128,13 +128,15 @@ where : {
 It's important to note that each object in the `or` array is treat as if it was in the "where" clause, thus you can create complex queries like this;
 
 Example:
-The example below selects cats where the color is orange and cuteness is superHigh OR breed is shorthair and cutenesslevel is low or color is black
+The example below selects all large white dogs OR all cats who are either small or black color
 
 ```javascript
 where : {
-    or : [ { color : 'orange', cutenessLevel : 'superHigh'},
-           { breed : 'shorthair', or : [ { cutenessLevel : 'low'},
-                                         { color : 'black'}]}
+    or : [ { type : 'dog, color : 'white', size : 'large'},
+           { type : 'cat', or : [ { size : 'small'},
+                                  { color : 'black'}
+                                ]
+           }
     ]
 }
 ```
