@@ -287,7 +287,8 @@ describe('migrations', function() {
 					cb(!err && res[0].email == 'yourname@newname.com');
 				});
 			}
-			UserData.update(  { where:{id:'1'}, update:{ email:'yourname@newname.com' }    }, function(err, o) {
+			UserData.update({ where:{id:'1'}, update:{ email:'yourname@newname.com' }}, function(err, o) {
+                assert.equal(err, null);
 				userExists(function(yep) {
                         assert.ok(yep, 'Email has changed');
 				});

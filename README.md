@@ -157,6 +157,16 @@ where : {
 }
 ```
 
+## Connection Pooling
+Mysql adapter uses the pooling provided by the node-mysql module. Simply set `pool` option to true in the connection settings.
+
+### Pool Options
+Taken from node-mysql module
+
+* `waitForConnections`: Determines the pool's action when no connections are available and the limit has been reached. If `true`, the pool will queue the connection request and call it when one becomes available. If `false`, the pool will immediately call back with an error. (Default: `true`)
+* `connectionLimit`: The maximum number of connections to create at once.(Default: `10`)
+* `queueLimit`: The maximum number of connection requests the pool will queue before returning an error from `getConnection`. If set to `0`, there is no limit to the number of queued connection requests. (Default: `0`)
+
 ## Creating Multi-Column Indexes
 The mysql adapter supports the declaration of multi-column indexes on models via the the `indexes` option in the 3rd argument to `define`. 
 
