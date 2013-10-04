@@ -193,6 +193,36 @@ it 'should autoupgrade', (test) ->
                     userExists (yep) ->
                         test.ok yep
                         test.done()
+						
+it "record should be updated", (done) ->
+  userExists = (cb) ->
+    query "SELECT * FROM UserData", (err, res) ->
+      cb not err and res[0].email is "yourname@newname.com"
+
+  UserData.update
+    where:
+      id: "1"
+
+    update:
+      email: "yourname@newname.com"
+  , (err, o) ->
+    userExists (yep) ->
+      assert.ok yep, "Email has changed"
+
+    # err when where missing
+    UserData.update
+      update:
+        email: "yourname@newname.com"
+    , (err, o) ->
+      assert.equal err, "Where or Update fields are missing", " no error when where field is missing "
+
+    # err when where update
+    UserData.update
+      where:
+        id: "1"
+    , (err, o) ->
+      assert.equal err, "Where or Update fields are missing", " no error when update field is missing "
+      done()
 
 it 'should check actuality of schema', (test) ->
     # drop column

@@ -5,8 +5,6 @@ var Schema = require('jugglingdb').Schema;
 var db, settings, adapter, DummyModel, odb;
 
 describe('migrations', function() {
-     
-    
     
     before(function() {
         require('./init.js');

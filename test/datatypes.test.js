@@ -49,10 +49,21 @@ describe('MySQL specific datatypes', function() {
             });
        });
     });
-    
+
+    it('should limit the length of string fields', function(done) {
+       var em = EnumModel.create({animal: ANIMAL_ENUM.CAT, condition: 'sleepy', mood: 'happy', name : "penny"}, function(err, obj) {
+            assert.ok(!err);
+            EnumModel.find(obj.id, function(err, found){
+                assert.ok(!err);
+                assert.equal(found.name, 'pen');
+                done();
+            });
+       });
+    });
+
     it('should disconnect when done', function(done) {
         db.disconnect();
-        done()
+        done();
     });
 
 });
@@ -68,7 +79,8 @@ function setup(done) {
     EnumModel = db.define('EnumModel', {
         animal: { type: ANIMAL_ENUM, null: false },
         condition: { type: db.EnumFactory('hungry', 'sleepy', 'thirsty') },
-        mood: { type: db.EnumFactory('angry', 'happy', 'sad') }
+        mood: { type: db.EnumFactory('angry', 'happy', 'sad') },
+        name: { type : String, datatype: "varchar", length : 3 }
     });
 
     blankDatabase(db, done);
@@ -128,9 +140,3 @@ getIndexes = function (model, cb) {
         }
     });
 };
-
-
-
-
-
-
