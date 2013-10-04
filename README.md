@@ -22,11 +22,11 @@ To use it you need `jugglingdb@0.2.x`.
 2. Use:
 
     ```javascript
-        var Schema = require('jugglingdb').Schema;
-        var schema = new Schema('mysql', {
-            database: 'myapp_test',
-            username: 'root'
-        });
+    var Schema = require('jugglingdb').Schema;
+    var schema = new Schema('mysql', {
+        database: 'myapp_test',
+        username: 'root'
+    });
     ```
     You can optionally pass a few additional parameters supported by `node-mysql`, most particularly `password` and `collation`. `Collation` currently defaults to `utf8mb4_general_ci`. The `collation` value will also be used to derive the connection charset.
 
@@ -96,21 +96,21 @@ The following type-dataType combinations are supported:
 * <h4> Enum </h4>
   Enums are special.
   Create an Enum using Enum factory:
-
-```javascript
-    var MOOD = schema.EnumFactory('glad', 'sad', 'mad');
-    MOOD.SAD;    // 'sad'
-    MOOD(2);     // 'sad'
-    MOOD('SAD'); // 'sad'
-    MOOD('sad'); // 'sad'
-```
+  
+  ```javascript
+  var MOOD = schema.EnumFactory('glad', 'sad', 'mad');
+  MOOD.SAD;    // 'sad'
+  MOOD(2);     // 'sad'
+  MOOD('SAD'); // 'sad'
+  MOOD('sad'); // 'sad'
+  ```
   
   * `{ mood: { type: MOOD }}`
   * `{ choice: { type: schema.EnumFactory('yes', 'no', 'maybe'), null: false }}`
 
 ## Using OR and IN operator
 
-<h3>OR</h3>
+### OR
 Mysql adapter now supports the or functionality. You can add an `or` array object to the where clause to join the arguments in the `or` array with an OR.
     
 Example:
@@ -132,7 +132,7 @@ The example below selects all large white dogs OR all cats who are either small 
 
 ```javascript
 where : {
-    or : [ { type : 'dog, color : 'white', size : 'large'},
+    or : [ { type : 'dog', color : 'white', size : 'large'},
            { type : 'cat', or : [ { size : 'small'},
                                   { color : 'black'}
                                 ]
@@ -141,14 +141,18 @@ where : {
 }
 ```
 
-SQL translation for the above would be: `WHERE (color = 'orange' OR cutenessLelvel = 'superHigh') AND (breed = 'shorthair AND (cutenessLevel = 'low' OR color = 'black))`
+SQL translation for the above would be:
 
-<h3>IN</h3>
+```sql
+WHERE (type = 'dog' AND color = 'white' AND size = 'large')
+   OR (type = 'cat' AND (size = 'small' OR color = 'black'))
+```
+
+### IN
 
 IN operator is pretty straight forward. If you give any columns in the where clause an array, they will be interpreted to be an IN object
 
-Example
-
+Example:
 The example below will look for items that have id 1, 4 or 6
 
 ```javascript
@@ -197,12 +201,10 @@ in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-```
 
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
-```text
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
