@@ -126,6 +126,31 @@ describe('basic-query-mysql', function () {
       done();
     });
   });
+
+  describe('count', function () {
+    it('should query filtered count where name like %Len%', function (done) {
+      UserData.count({
+        name: { like: '%Len%' }
+      }, function (err, count) {
+          should.not.exists(err);
+          should.exists(count);
+          count.should.equal(1);
+          done();
+      });
+    });
+
+    it('should query filtered count using IN operation', function (done) {
+      UserData.count({
+          order : [ 4, 6 ]
+      }, function (err, count) {
+        should.not.exists(err);
+        should.exists(count);
+        count.should.equal(2);
+        done();
+      });
+    });
+  });
+
 });
 
 function seed(done) {
