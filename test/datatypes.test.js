@@ -51,7 +51,7 @@ describe('MySQL specific datatypes', function() {
        });
     });
 
-    it('should limit the length of string fields', function(done) {
+    it.skip('should limit the length of string fields', function(done) {
        var em = EnumModel.create({animal: ANIMAL_ENUM.CAT, condition: 'sleepy', mood: 'happy', name : "penny"}, function(err, obj) {
            console.log(err);
             assert.ok(!err);

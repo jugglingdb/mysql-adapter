@@ -26,7 +26,7 @@ describe('migrations', function() {
                     Extra: 'auto_increment' },
                 email: {
                     Field: 'email',
-                    Type: 'varchar(255)',
+                    Type: 'varchar(30)',
                     Null: 'NO',
                     Key: 'MUL',
                     Default: null,
@@ -74,6 +74,7 @@ describe('migrations', function() {
     it('UserData should have correct indexes', function(done) {
         // Note: getIdexes truncates multi-key indexes to the first member. Hence index1 is correct.
         getIndexes('UserData', function(err, fields) {
+            console.log(fields);
             assert.deepEqual(fields, { PRIMARY: 
                { Table: 'UserData',
                  Non_unique: 0,
@@ -96,7 +97,7 @@ describe('migrations', function() {
                  Column_name: 'email',
                  Collation: 'A',
                  Cardinality: 0,
-                 Sub_part: 191,
+                 Sub_part: null,
                  Packed: null,
                  Null: '',
                  Index_type: 'BTREE',
@@ -110,7 +111,7 @@ describe('migrations', function() {
                  Column_name: 'email',
                  Collation: 'A',
                  Cardinality: 0,
-                 Sub_part: 191,
+                 Sub_part: null,
                  Packed: null,
                  Null: '',
                  Index_type: 'BTREE',
@@ -322,7 +323,6 @@ describe('migrations', function() {
     
     it('should allow numbers with decimals', function(done) {
         NumberData.create({number: 1.1234567, tinyInt: 127, mediumInt: 0, floater: 99.99 }, function(err, obj) {
-            console.log(err);
             assert.ok(!err);
             assert.ok(obj);
             NumberData.find(obj.id, function(err, found) {
