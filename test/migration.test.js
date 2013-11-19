@@ -5,15 +5,15 @@ var Schema = require('jugglingdb').Schema;
 var db, UserData, StringData, NumberData, DateData; 
 
 describe('migrations', function() {
-     
+
     before(setup);
-    
+
     it('should run migration', function(done) {
         db.automigrate(function(){
             done();
         });
     });
-    
+
     it('UserData should have correct columns', function(done) {
         getFields('UserData', function(err, fields) {
             assert.deepEqual(fields, { 
@@ -254,7 +254,7 @@ describe('migrations', function() {
             userExists(function(yep) {
                 assert.ok(yep, 'User does not exist');
             });
-            UserData.defineProperty('email', { type: String });
+            UserData.defineProperty('email', { type: String, limit: 20 });
             UserData.defineProperty('name', {type: String, dataType: 'char', limit: 50});
             UserData.defineProperty('newProperty', {type: Number, unsigned: true, dataType: 'bigInt'});
             // UserData.defineProperty('pendingPeriod', false); This will not work as expected.
@@ -321,14 +321,15 @@ describe('migrations', function() {
     });
     
     it('should allow numbers with decimals', function(done) {
-        NumberData.create({number: 1.1234567, tinyInt: 123456, mediumInt: -1234567, floater: 123456789.1234567 }, function(err, obj) {
+        NumberData.create({number: 1.1234567, tinyInt: 127, mediumInt: 0, floater: 99.99 }, function(err, obj) {
+            console.log(err);
             assert.ok(!err);
             assert.ok(obj);
             NumberData.find(obj.id, function(err, found) {
                 assert.equal(found.number, 1.123);
                 assert.equal(found.tinyInt, 127);
                 assert.equal(found.mediumInt, 0);
-                assert.equal(found.floater, 99999999.999999);
+                assert.equal(found.floater, 99.99);
                 done();
             });
         });
@@ -363,7 +364,7 @@ function setup(done) {
     db = getSchema();    
     
     UserData = db.define('UserData', {
-        email: { type: String, null: false, index: true },
+        email: { type: String, null: false, index: true, limit: 30 },
         name: String,
         bio: Schema.Text,
         birthDate: Date,
@@ -397,7 +398,7 @@ function setup(done) {
     });
 
     blankDatabase(db, done);
-    
+
 }
 
 var query = function (sql, cb) {
