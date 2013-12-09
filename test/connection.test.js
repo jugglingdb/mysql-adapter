@@ -50,6 +50,36 @@ describe('migrations', function() {
     });
 });
 
+describe('dropped connections', function() {
+
+    before(function() {
+        require('./init.js');
+        db = getSchema();
+    });
+
+    it('should reconnect', function(done) {
+        db.on('reconnect', function(err) {
+            done();
+        });
+
+        db.client._socket.on('timeout', function() {
+            db.client._socket.emit('error', {
+                message: 'Test error',
+                stack: '',
+                code: 'PROTOCOL_CONNECTION_LOST'
+            });
+        });
+
+        db.client._socket.setTimeout(100);
+    });
+
+    it('should use the new connection', function(done) {
+        db.adapter.query('SHOW TABLES', function(err) {
+            should.not.exist(err);
+            done();
+        });
+    });
+});
 
 
 function charsetTest(test_set, test_collo, test_set_str, test_set_collo, done){
