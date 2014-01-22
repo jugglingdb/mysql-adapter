@@ -74,7 +74,6 @@ describe('migrations', function() {
     it('UserData should have correct indexes', function(done) {
         // Note: getIdexes truncates multi-key indexes to the first member. Hence index1 is correct.
         getIndexes('UserData', function(err, fields) {
-            console.log(fields);
             assert.deepEqual(fields, { PRIMARY: 
                { Table: 'UserData',
                  Non_unique: 0,
