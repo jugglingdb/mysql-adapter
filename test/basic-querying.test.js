@@ -42,6 +42,21 @@ describe('basic-query-mysql', function () {
     });
   });
 
+  it('should count collection where order is 1 or 5', function (done) {
+      UserData.count({
+        or : [{
+          order : 1
+        }, {
+          order : 5
+        }]
+      }, function (err, count) {
+        should.not.exists(err);
+        should.exists(count);
+        count.should.eql(2);
+        done();
+      });
+    });
+
   it('should query collection where name like Len', function (done) {
     UserData.all({
       where : {
