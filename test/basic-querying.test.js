@@ -43,7 +43,7 @@ describe('basic-query-mysql', function () {
   });
 
   it('should query collection with given attributes', function (done) {
-    UserData.all({
+    UserData.select({
       where : {
         or : [{
           order : 1
