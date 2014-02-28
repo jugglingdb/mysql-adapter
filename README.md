@@ -1,4 +1,4 @@
-## JugglingDB-MySQL [![Build Status](https://travis-ci.org/jugglingdb/mysql-adapter.png)](https://travis-ci.org/jvskelton/mysql-adapter)
+-## JugglingDB-MySQL [![Build Status](https://travis-ci.org/jugglingdb/mysql-adapter.png)](https://travis-ci.org/jugglingdb/mysql-adapter)
 
 MySQL adapter for JugglingDB.
 
