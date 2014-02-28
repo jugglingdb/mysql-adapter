@@ -42,6 +42,24 @@ describe('basic-query-mysql', function () {
     });
   });
 
+  it('should query collection with given attributes', function (done) {
+    UserData.select({
+      where : {
+        or : [{
+          order : 1
+        }, {
+          order : 5
+        }]
+      }, attributes: ['id']
+    }, function (err, users) {
+      should.exists(users);
+      should.not.exists(err);
+      users.should.have.lengthOf(2);
+      user.should.be.instanceOf(Array);
+      done();
+    });
+  });
+
   it('should count collection where order is 1 or 5', function (done) {
       UserData.count({
         or : [{
