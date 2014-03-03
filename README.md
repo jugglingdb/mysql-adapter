@@ -1,4 +1,4 @@
--## JugglingDB-MySQL [![Build Status](https://travis-ci.org/jugglingdb/mysql-adapter.png)](https://travis-ci.org/jugglingdb/mysql-adapter)
+## JugglingDB-MySQL [![Build Status](https://travis-ci.org/jugglingdb/mysql-adapter.png)](https://travis-ci.org/jvskelton/mysql-adapter)
 
 MySQL adapter for JugglingDB.
 
@@ -160,6 +160,26 @@ where : {
     id : [1,4,6]
 }
 ```
+
+## Select specific columns
+
+In some cases, you may wish to select specific columns from the table, to do so simply use the `attributes` param.
+
+###Examples:
+
+returns array of column data(ex. ['1','2','3']
+
+    Model.all({where: {name: 'Bill'}, attributes: 'id'},cb)
+
+returns array of object literals(ex. [{id:'1'}, {id:'2'}, {id:'3'}]
+
+    Model.all({where: {name: 'Bill'}, attributes: ['id']},cb)
+
+returns array of object literals(ex. [{id:'1', age:'25'}, {id:'2', age:'56'}, {id:'3', age: '44'}]
+
+    Model.all({where: {name: 'Bill'}, attributes: ['id', 'age']},cb)
+
+
 
 ## Connection Pooling
 Mysql adapter uses the pooling provided by the node-mysql module. Simply set `pool` option to true in the connection settings.
