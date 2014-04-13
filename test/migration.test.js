@@ -322,13 +322,11 @@ describe('migrations', function() {
                 });
             }
 
-
             UserData.update([{where:{id:'1'}, update:{ email:'one@newname.com' }},
                 {update:{ email:'usertwo@newname.com' }  }]  , function(err, o) {
                         assert.equal(err[1], "Where or Update fields are missing", " no error when update field is missing ");
                 
             });
-
 
             UserData.update([{where:{id:'1'}, update:{ email:'userone@newname.com' }},
                 {where:{id:'2'}, update:{ email:'usertwo@newname.com' }}]  , function(err, o) {
@@ -346,12 +344,11 @@ describe('migrations', function() {
                         done();
                 });
 
-                
             });
         });
     });
-	
-	it('should check actuality of schema', function(done) {
+
+    it('should check actuality of schema', function(done) {
         // 'drop column'
         UserData.schema.isActual(function(err, ok) {
             assert.ok(ok, 'schema is not actual (should be)');
