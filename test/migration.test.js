@@ -321,13 +321,15 @@ describe('migrations', function() {
                     cb(!err && res[id].email == email);
                 });
             }
-
+            
+            // Verify that update and where fields should be set
             UserData.update([{where:{id:'1'}, update:{ email:'one@newname.com' }},
                 {update:{ email:'usertwo@newname.com' }  }]  , function(err, o) {
                         assert.equal(err[1], "Where or Update fields are missing", " no error when update field is missing ");
                 
             });
 
+            // do multi row update
             UserData.update([{where:{id:'1'}, update:{ email:'userone@newname.com' }},
                 {where:{id:'2'}, update:{ email:'usertwo@newname.com' }}]  , function(err, o) {
                 
@@ -341,9 +343,25 @@ describe('migrations', function() {
                 // Verify user two email update 
                 userExists('usertwo@newname.com',1,function(yep) {
                         assert.ok(yep, 'Email of user two has changed'); 
-                        done();
                 });
-
+                
+                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10},function(e,o){});
+                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10},function(e,o){});
+                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5},function(e,o){});
+                
+                UserData.update([{where:{pendingPeriod:{gt:9}}, update:{ bio:'expired' }}], function(err, o) {
+                        
+                    // Verify that user 3 and 4 's bio is expired
+                    query('SELECT * FROM UserData where pendingPeriod > 9 ', function(err, res) {
+                        assert.equal(res[0,1].bio,'expired',"When where greater conds bio expired");
+                    }); 
+                        
+                    // Verify that user 5 's bio is still null
+                    query('SELECT * FROM UserData where id=5', function(err, res) {
+                        assert.equal(res[0].bio,null,"When where greater conds bio null");
+                        done();
+                    });
+                });
             });
         });
     });
