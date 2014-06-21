@@ -5,17 +5,17 @@ var Schema = require('jugglingdb').Schema;
 var db, settings, adapter, DummyModel, odb;
 
 describe('migrations', function() {
-    
+
     before(function() {
         require('./init.js');
-        
+
         odb = getSchema({collation: 'utf8mb4_general_ci'});
         db = odb;
     });
-    
-    
+
+
     it('should use utf8mb4 charset', function(done) {
-        
+
         var test_set = /utf8mb4/;
         var test_collo = /utf8mb4_general_ci/;
         var test_set_str = 'utf8mb4';
@@ -23,24 +23,24 @@ describe('migrations', function() {
         charsetTest(test_set, test_collo, test_set_str, test_set_collo, done);
 
     });
-    
+
     it('should disconnect first db', function(done) {
         db.client.end(function(){
             odb = getSchema();
-            done()
+            done();
         });
     });
-    
+
     it('should use latin1 charset', function(done) {
-        
+
         var test_set = /latin1/;
         var test_collo = /latin1_general_ci/;
         var test_set_str = 'latin1';
         var test_set_collo = 'latin1_general_ci';
         charsetTest(test_set, test_collo, test_set_str, test_set_collo, done);
-        
+
     });
-    
+
     it('should drop db and disconnect all', function(done) {
         db.adapter.query('DROP DATABASE IF EXISTS ' + db.settings.database, function(err) {
             db.client.end(function(){
@@ -86,13 +86,27 @@ describe('dropped connections', function() {
     });
 });
 
+describe('escape functions', function() {
+    it('should escape id', function(done) {
+        assert.equal(db.adapter.escapeId(20), 20);
+        assert.equal(db.adapter.escapeId('20'), 20);
+        assert.equal(db.adapter.escapeId('mycustomid'), '"mycustomid"');
+        done();
+    });
+
+    it('should escape name', function(done) {
+        assert.equal(db.adapter.escapeName('users'), '`users`');
+        assert.equal(db.adapter.escapeName('testing_table'), '`testing_table`');
+        done();
+    });
+});
 
 function charsetTest(test_set, test_collo, test_set_str, test_set_collo, done){
-    
+
     query('DROP DATABASE IF EXISTS ' + odb.settings.database, function(err) {
         assert.ok(!err);
-        odb.client.end(function(){ 
-            
+        odb.client.end(function(){
+
             db = getSchema({collation: test_set_collo});
             DummyModel = db.define('DummyModel', {string: String});
             db.automigrate(function(){
@@ -125,7 +139,7 @@ function charsetTest(test_set, test_collo, test_set_str, test_set_collo, done){
             });
         });
     });
-    
+
 }
 
 function matchResult(result, variable_name, match) {
@@ -139,9 +153,3 @@ function matchResult(result, variable_name, match) {
 var query = function (sql, cb) {
     odb.adapter.query(sql, cb);
 };
-
-
-
-
-
-
