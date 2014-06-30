@@ -55,7 +55,7 @@ describe('basic-query-mysql', function () {
       should.exists(users);
       should.not.exists(err);
       users.should.have.lengthOf(2);
-      user.should.be.instanceOf(Array);
+      users.should.be.instanceOf(Array);
       done();
     });
   });
