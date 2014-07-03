@@ -43,7 +43,7 @@ describe('basic-query-mysql', function () {
   });
 
   it('should query collection with given attributes array, and return array Of Objects', function (done) {
-    UserData.select({
+    UserData.all({
       where : {
         or : [{
           order : 1
@@ -62,7 +62,7 @@ describe('basic-query-mysql', function () {
   });
   
   it('should query collection with given attributes array, and return array ids', function (done) {
-    UserData.select({
+    UserData.all({
       where : {
         or : [{
           order : 1
