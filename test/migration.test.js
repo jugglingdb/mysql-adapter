@@ -301,13 +301,20 @@ describe('migrations', function() {
                 // err when where missing
                 UserData.update({ update:{email:'yourname@newname.com' }}, function(err, o) {
                     assert.equal(err[0], "Where or Update fields are missing", " no error when where field is missing ");
-                });
-                
+                });    
+
                 // err when where update
                 UserData.update({where:{id:'1'}}, function(err, o) {
                     assert.equal(err[0], "Where or Update fields are missing", " no error when update field is missing ");
+                   
+                });
+
+                // Update set null and not is null
+                UserData.update({ update:{email:null }  ,where:{id:'1'} }, function(err, o) {
+                    assert.equal(o[0].affectedRows, 1,"Update set null ");
                     done();
                 });
+
             });
     });   
 
@@ -498,7 +505,7 @@ getFields = function (model, cb) {
 getIndexes = function (model, cb) {
     query('SHOW INDEXES FROM ' + model, function(err, res) {
         if (err) {
-            console.log(err);
+            //console.log(err);
             cb(err);
         } else {
             var indexes = {};
