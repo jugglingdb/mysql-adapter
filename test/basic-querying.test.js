@@ -1,6 +1,7 @@
 var should = require('./init.js');
 var Schema = require('jugglingdb').Schema;
 var db, UserData;
+var assert = require('assert');
 
 describe('basic-query-mysql', function () {
   before(setup);
@@ -130,6 +131,8 @@ describe('basic-query-mysql', function () {
   });
 
   it('should query collection using IN operation', function (done) {
+    
+
     UserData.all({
       where : {
         order : [ 4, 6 ]
@@ -141,7 +144,15 @@ describe('basic-query-mysql', function () {
       done();
     });
   });
-});
+
+  it('should query collection using IN operation', function (done) {
+     UserData.all({where : {} },function(err,users){
+        assert.equal(err, "Where field is empty", " no error when is where field is not empty"); 
+        done();
+     });
+  });
+});  
+
 
 function seed(done) {
   var count = 0;
