@@ -1,14 +1,17 @@
 {
   "name": "jugglingdb-mysql",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "MySQL adapter for JugglingDB",
   "main": "index.js",
   "scripts": {
     "test": "make test"
   },
   "dependencies": {
-    "jugglingdb": ">= 0.2.x",
-    "mysql": ">= 2.0.0-alpha3"
+    "jugglingdb": ">= 0.2.8",
+    "mysql": ">= 2.0.0-alpha3",
+    "should": "~3.0.1",
+    "coffee-script": "~1.6.3",
+    "semicov": "~0.1.1-2"
   },
   "devDependencies": {
     "coffee-script": "latest",
