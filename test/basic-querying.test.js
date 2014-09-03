@@ -145,11 +145,15 @@ describe('basic-query-mysql', function () {
     });
   });
 
-  it('should query collection using IN operation', function (done) {
-     UserData.all({where : {} },function(err,users){
-        assert.equal(err, "Where field is empty", " no error when is where field is not empty"); 
-        done();
-     });
+  it('should query collection using Where operation', function (done) {
+
+        try{
+            UserData.all({where : {} },function(err,users){});
+        }catch( e){
+          assert.equal(e.message, 'Where field is empty', 'Where field cannot be empty');
+          done(); 
+        }
+
   });
 });  
 
