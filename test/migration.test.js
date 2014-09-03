@@ -75,7 +75,7 @@ describe('migrations', function() {
         // Note: getIdexes truncates multi-key indexes to the first member. Hence index1 is correct.
         getIndexes('UserData', function(err, fields) {
             assert.deepEqual(fields, { PRIMARY: 
-               { Table: 'UserData',
+               { Table: 'userdata',
                  Non_unique: 0,
                  Key_name: 'PRIMARY',
                  Seq_in_index: 1,
@@ -89,7 +89,7 @@ describe('migrations', function() {
                  Comment: '',
                  Index_comment: '' },
               email: 
-               { Table: 'UserData',
+               { Table: 'userdata',
                  Non_unique: 1,
                  Key_name: 'email',
                  Seq_in_index: 1,
@@ -103,7 +103,7 @@ describe('migrations', function() {
                  Comment: '',
                  Index_comment: '' },
               index0: 
-               { Table: 'UserData',
+               { Table: 'userdata',
                  Non_unique: 1,
                  Key_name: 'index0',
                  Seq_in_index: 1,
@@ -281,33 +281,97 @@ describe('migrations', function() {
         });
     });
 
-    it('record should be updated', function(done) {
-			var userExists = function(cb) {
-				query('SELECT * FROM UserData', function(err, res) {
-					cb(!err && res[0].email == 'yourname@newname.com');
-				});
-			}
-			UserData.update({ where:{id:'1'}, update:{ email:'yourname@newname.com' }}, function(err, o) {
-                assert.equal(err, null);
-				userExists(function(yep) {
+    it('record should be single updated', function(done) {
+
+            var userExists = function(cb) {
+                query('SELECT * FROM UserData', function(err, res) {
+                    cb(!err && res[0].email == 'yourname@newname.com');
+                });
+            }
+            
+            UserData.update({where:{id:'1'}, update:{ email:'yourname@newname.com' }}  , function(err, o) {
+                
+                assert.equal(err,null);
+
+                userExists(function(yep) {
                         assert.ok(yep, 'Email has changed');
-				});
-				
-				// err when where missing
-				UserData.update(  {	update:{ email:'yourname@newname.com' }    }, function(err, o) {
-					assert.equal(err, "Where or Update fields are missing", " no error when where field is missing ");
-				});
-				
-				// err when where update
-				UserData.update(  	{ where:{id:'1'}  }, function(err, o) {
-					assert.equal(err, "Where or Update fields are missing", " no error when update field is missing ");
-					done();
-				});
-				
-			});
-	});
-	
-	it('should check actuality of schema', function(done) {
+                });
+
+                // err when where missing
+                UserData.update({ update:{email:'yourname@newname.com' }}, function(err, o) {
+                    assert.equal(err[0], "Where or Update fields are missing", " no error when where field is missing ");
+                });    
+
+                // err when where update
+                UserData.update({where:{id:'1'}}, function(err, o) {
+                    assert.equal(err[0], "Where or Update fields are missing", " no error when update field is missing ");
+                });
+
+                // Update set null and not is null
+                UserData.update({ update:{email:null }  ,where:{id:'1'} }, function(err, o) {
+                    assert.equal(o[0].affectedRows, 1,"Update set null ");
+                    done();
+                });
+
+            });
+    });   
+
+    it('record should be multi updated', function(done) {
+
+        // Create second user
+        UserData.create({email: 'youtnametwo@example.com'}, function(err, user) {
+            
+            var userExists = function(email,id,cb) {
+                query('SELECT * FROM UserData', function(err, res) {
+                    cb(!err && res[id].email == email);
+                });
+            }
+            
+            // Verify that update and where fields should be set
+            UserData.update([{where:{id:'1'}, update:{ email:'one@newname.com' }},
+                {update:{ email:'usertwo@newname.com' }  }]  , function(err, o) {
+                        assert.equal(err[1], "Where or Update fields are missing", " no error when update field is missing ");
+                
+            });
+
+            // do multi row update
+            UserData.update([{where:{id:'1'}, update:{ email:'userone@newname.com' }},
+                {where:{id:'2'}, update:{ email:'usertwo@newname.com' }}]  , function(err, o) {
+                
+                assert.equal(err, null);
+
+                // Verify user two email update 
+                userExists('userone@newname.com',0,function(yep) {
+                        assert.ok(yep, 'Email of user one has changed');
+                });
+                
+                // Verify user two email update 
+                userExists('usertwo@newname.com',1,function(yep) {
+                        assert.ok(yep, 'Email of user two has changed'); 
+                });
+                
+                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10},function(e,o){});
+                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10},function(e,o){});
+                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5},function(e,o){});
+                
+                UserData.update([{where:{pendingPeriod:{gt:9}}, update:{ bio:'expired' }}], function(err, o) {
+                        
+                    // Verify that user 3 and 4 's bio is expired
+                    query('SELECT * FROM UserData where pendingPeriod > 9 ', function(err, res) {
+                        assert.equal(res[0,1].bio,'expired',"When where greater conds bio expired");
+                    }); 
+                        
+                    // Verify that user 5 's bio is still null
+                    query('SELECT * FROM UserData where id=5', function(err, res) {
+                        assert.equal(res[0].bio,null,"When where greater conds bio null");
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    it('should check actuality of schema', function(done) {
         // 'drop column'
         UserData.schema.isActual(function(err, ok) {
             assert.ok(ok, 'schema is not actual (should be)');
@@ -439,7 +503,7 @@ getFields = function (model, cb) {
 getIndexes = function (model, cb) {
     query('SHOW INDEXES FROM ' + model, function(err, res) {
         if (err) {
-            console.log(err);
+            //console.log(err);
             cb(err);
         } else {
             var indexes = {};
