@@ -7,7 +7,7 @@
     "test": "make test"
   },
   "dependencies": {
-    "jugglingdb": ">= 0.2.8",
+    "jugglingdb": ">= 0.3.0",
     "mysql": ">= 2.0.0-alpha3",
     "should": "~3.0.1",
     "coffee-script": "~1.6.3",
