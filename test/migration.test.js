@@ -89,54 +89,49 @@ describe('migrations', function() {
     it('UserData should have correct indexes', function(done) {
         // Note: getIdexes truncates multi-key indexes to the first member. Hence index1 is correct.
         getIndexes('UserData', function(err, fields) {
-            console.log(fields);
-            assert.deepEqual(fields, {  
-               PRIMARY:{  
-                  Table:'userdata',
-                  Non_unique:0,
-                  Key_name:'PRIMARY',
-                  Seq_in_index:1,
-                  Column_name:'id',
-                  Collation:'A',
-                  Cardinality:0,
-                  Sub_part:null,
-                  Packed:null,
-                  Null:'',
-                  Index_type:'BTREE',
-                  Comment:'',
-                  Index_comment:''
-               },
-               email:{  
-                  Table:'userdata',
-                  Non_unique:1,
-                  Key_name:'email',
-                  Seq_in_index:1,
-                  Column_name:'email',
-                  Collation:'A',
-                  Cardinality:0,
-                  Sub_part:null,
-                  Packed:null,
-                  Null:'',
-                  Index_type:'BTREE',
-                  Comment:'',
-                  Index_comment:''
-               },
-               index0:{  
-                  Table:'userdata',
-                  Non_unique:1,
-                  Key_name:'index0',
-                  Seq_in_index:1,
-                  Column_name:'email',
-                  Collation:'A',
-                  Cardinality:0,
-                  Sub_part:null,
-                  Packed:null,
-                  Null:'',
-                  Index_type:'BTREE',
-                  Comment:'',
-                  Index_comment:''
-               }
-            });
+            assert.deepEqual(fields, { PRIMARY: 
+               { Table: 'UserData',
+                 Non_unique: 0,
+                 Key_name: 'PRIMARY',
+                 Seq_in_index: 1,
+                 Column_name: 'id',
+                 Collation: 'A',
+                 Cardinality: 0,
+                 Sub_part: null,
+                 Packed: null,
+                 Null: '',
+                 Index_type: 'BTREE',
+                 Comment: '',
+                 Index_comment: '' },
+              email: 
+               { Table: 'UserData',
+                 Non_unique: 1,
+                 Key_name: 'email',
+                 Seq_in_index: 1,
+                 Column_name: 'email',
+                 Collation: 'A',
+                 Cardinality: 0,
+                 Sub_part: null,
+                 Packed: null,
+                 Null: '',
+                 Index_type: 'BTREE',
+                 Comment: '',
+                 Index_comment: '' },
+              index0: 
+               { Table: 'UserData',
+                 Non_unique: 1,
+                 Key_name: 'index0',
+                 Seq_in_index: 1,
+                 Column_name: 'email',
+                 Collation: 'A',
+                 Cardinality: 0,
+                 Sub_part: null,
+                 Packed: null,
+                 Null: '',
+                 Index_type: 'BTREE',
+                 Comment: '',
+                 Index_comment: '' } 
+             });
             done();
         });
     });
