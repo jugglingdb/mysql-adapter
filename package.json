@@ -8,15 +8,15 @@
   },
   "dependencies": {
     "jugglingdb": ">= 0.3.0",
-    "mysql": ">= 2.0.0-alpha3",
+    "mysql": "~2.0.0",
     "should": "~3.0.1",
     "coffee-script": "~1.6.3",
     "semicov": "~0.1.1-2"
   },
   "devDependencies": {
     "coffee-script": "latest",
-    "should": "~1.2.2",
-    "mocha": "~1.8.2",
+    "should": "<2",
+    "mocha": "<2",
     "semicov": "*"
   },
   "repository": {
