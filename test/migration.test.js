@@ -16,56 +16,71 @@ describe('migrations', function() {
 
     it('UserData should have correct columns', function(done) {
         getFields('UserData', function(err, fields) {
-            assert.deepEqual(fields, { 
-                id: {
-                    Field: 'id',
-                    Type: 'int(11)',
-                    Null: 'NO',
-                    Key: 'PRI',
-                    Default: null,
-                    Extra: 'auto_increment' },
-                email: {
-                    Field: 'email',
-                    Type: 'varchar(30)',
-                    Null: 'NO',
-                    Key: 'MUL',
-                    Default: null,
-                    Extra: '' },
-                name: {
-                    Field: 'name',
-                    Type: 'varchar(255)',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' },
-                bio: {
-                    Field: 'bio',
-                    Type: 'text',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' },
-                birthDate: {
-                    Field: 'birthDate',
-                    Type: 'datetime',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' },
-                pendingPeriod: {
-                    Field: 'pendingPeriod',
-                    Type: 'int(11)',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' },
-                createdByAdmin: {
-                    Field: 'createdByAdmin',
-                    Type: 'tinyint(1)',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' }
+            assert.deepEqual(fields, {  
+               id:{  
+                  Field:'id',
+                  Type:'int(11)',
+                  Null:'NO',
+                  Key:'PRI',
+                  Default:null,
+                  Extra:'auto_increment'
+               },
+               email:{  
+                  Field:'email',
+                  Type:'varchar(30)',
+                  Null:'NO',
+                  Key:'MUL',
+                  Default:null,
+                  Extra:''
+               },
+               name:{  
+                  Field:'name',
+                  Type:'varchar(255)',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               bio:{  
+                  Field:'bio',
+                  Type:'longtext',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               order:{  
+                  Field:'order',
+                  Type:'int(11)',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               birthDate:{  
+                  Field:'birthDate',
+                  Type:'datetime',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               pendingPeriod:{  
+                  Field:'pendingPeriod',
+                  Type:'int(11)',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               createdByAdmin:{  
+                  Field:'createdByAdmin',
+                  Type:'tinyint(1)',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               }
             });
             done();
         });    
@@ -249,7 +264,7 @@ describe('migrations', function() {
             });
         }
 
-        UserData.create({email: 'test@example.com'}, function(err, user) {
+        UserData.create({email: 'test@example.com', order: 1}, function(err, user) {
             assert.ok(!err, 'Could not create user');
             userExists(function(yep) {
                 assert.ok(yep, 'User does not exist');
@@ -319,7 +334,7 @@ describe('migrations', function() {
     it('record should be multi updated', function(done) {
 
         // Create second user
-        UserData.create({email: 'youtnametwo@example.com'}, function(err, user) {
+        UserData.create({email: 'youtnametwo@example.com', order: 3}, function(err, user) {
             
             var userExists = function(email,id,cb) {
                 query('SELECT * FROM UserData', function(err, res) {
@@ -350,9 +365,9 @@ describe('migrations', function() {
                         assert.ok(yep, 'Email of user two has changed'); 
                 });
                 
-                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10},function(e,o){});
-                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10},function(e,o){});
-                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5},function(e,o){});
+                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10, order: 5},function(e,o){});
+                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10, order: 7},function(e,o){});
+                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5, order: 50},function(e,o){});
                 
                 UserData.update([{where:{pendingPeriod:{gt:9}}, update:{ bio:'expired' }}], function(err, o) {
                         
@@ -430,6 +445,7 @@ function setup(done) {
         email: { type: String, null: false, index: true, limit: 30 },
         name: String,
         bio: Schema.Text,
+        order : Number,
         birthDate: Date,
         pendingPeriod: Number,
         createdByAdmin: Boolean,

@@ -17,6 +17,7 @@ User = schema.define 'User',
     email: { type: String, null: false, index: true }
     name: String
     bio: Text
+    order: Number
     password: String
     birthDate: Date
     pendingPeriod: Number
@@ -88,6 +89,13 @@ it 'should run migration', (test) ->
                         Key: ''
                         Default: null
                         Extra: ''
+                    order:  
+                      Field: 'order'
+                      Type: 'int(11)'
+                      Null: 'YES'
+                      Key: ''
+                      Default: null
+                      Extra: ''
                     password:
                         Field: 'password'
                         Type: 'varchar(255)'
