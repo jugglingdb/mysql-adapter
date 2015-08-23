@@ -3,5 +3,40 @@ node_js:
   - 0.8
   - 0.10
   - 0.12
+  - 1.0
+  - 1.8
+  - 2.0
+  - 2.3
+
+matrix:
+    include:
+        - addons:
+             mariadb: 5.5
+          node_js: '1.8'
+        - addons:
+             mariadb: 10.0
+          node_js: '1.8'
+        - addons:
+             mariadb: 10.1
+          node_js: '1.8'
+        - addons:
+             mariadb: 5.5
+          node_js: '2.0'
+        - addons:
+             mariadb: 10.0
+          node_js: '2.0'
+        - addons:
+             mariadb: 10.1
+          node_js: '2.0'
+        - addons:
+             mariadb: 5.5
+          node_js: '2.3'
+        - addons:
+             mariadb: 10.0
+          node_js: '2.3'
+        - addons:
+             mariadb: 10.1
+          node_js: '2.3'
+
 before_script:
   - "mysql -e 'create database myapp_test;'"
