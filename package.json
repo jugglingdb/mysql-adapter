@@ -7,17 +7,15 @@
     "test": "make test"
   },
   "dependencies": {
-    "jugglingdb": ">= 0.3.0",
-    "mysql": "~2.0.0",
-    "should": "~3.0.1",
-    "coffee-script": "~1.6.3",
-    "semicov": "~0.1.1-2"
+    "jugglingdb": "^1.0.2",
+    "mysql": ">= 2.0.0-alpha3",
+    "uuid": "^2.0.1"
   },
   "devDependencies": {
-    "coffee-script": "latest",
-    "should": "<2",
-    "mocha": "<2",
-    "semicov": "*"
+    "semicov": "~0.1.1-2",
+    "mocha": "^2.4.3",
+    "should": "~3.0.1",
+    "coffee-script": "latest"
   },
   "repository": {
     "type": "git",

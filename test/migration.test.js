@@ -8,12 +8,6 @@ describe('migrations', function() {
 
     before(setup);
 
-    it('should run migration', function(done) {
-        db.automigrate(function(){
-            done();
-        });
-    });
-
     it('UserData should have correct columns', function(done) {
         getFields('UserData', function(err, fields) {
             assert.deepEqual(fields, {  
@@ -27,7 +21,7 @@ describe('migrations', function() {
                },
                email:{  
                   Field:'email',
-                  Type:'varchar(30)',
+                  Type:'varchar(100)',
                   Null:'NO',
                   Key:'MUL',
                   Default:null,
@@ -269,7 +263,7 @@ describe('migrations', function() {
             userExists(function(yep) {
                 assert.ok(yep, 'User does not exist');
             });
-            UserData.defineProperty('email', { type: String, limit: 20 });
+            UserData.defineProperty('email', { type: String, length: 110 });
             UserData.defineProperty('name', {type: String, dataType: 'char', limit: 50});
             UserData.defineProperty('newProperty', {type: Number, unsigned: true, dataType: 'bigInt'});
             // UserData.defineProperty('pendingPeriod', false); This will not work as expected.
@@ -334,10 +328,13 @@ describe('migrations', function() {
     it('record should be multi updated', function(done) {
 
         // Create second user
-        UserData.create({email: 'youtnametwo@example.com', order: 3}, function(err, user) {
+        UserData.create({email: 'helloworld-helloworld@example.com', order: 3}, function(err, user) {
+            console.log(err);
+            assert(!err, 'User is not created');
             
             var userExists = function(email,id,cb) {
                 query('SELECT * FROM UserData', function(err, res) {
+                    console.log(arguments, id, res.length);
                     cb(!err && res[id].email == email);
                 });
             }
@@ -365,15 +362,22 @@ describe('migrations', function() {
                         assert.ok(yep, 'Email of user two has changed'); 
                 });
                 
-                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10, order: 5},function(e,o){});
-                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10, order: 7},function(e,o){});
-                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5, order: 50},function(e,o){});
+                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10, order: 5},function(e,o){
+                    assert(!e, 'User is not created');
+                });
+                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10, order: 7},function(e,o){
+                    assert(!e, 'User is not created');
+                });
+                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5, order: 50},function(e,o){
+                    assert(!e, 'User is not created');
+                });
                 
                 UserData.update([{where:{pendingPeriod:{gt:9}}, update:{ bio:'expired' }}], function(err, o) {
                         
-                    // Verify that user 3 and 4 's bio is expired
+                    // Verify that user 3 and 4's bio is expired
                     query('SELECT * FROM UserData where pendingPeriod > 9 ', function(err, res) {
-                        assert.equal(res[0,1].bio,'expired',"When where greater conds bio expired");
+                        console.log(arguments);
+                        assert.equal(res[1].bio, 'expired', 'When where greater conds bio expired');
                     }); 
                         
                     // Verify that user 5 's bio is still null
@@ -442,7 +446,7 @@ function setup(done) {
     db = getSchema();    
     
     UserData = db.define('UserData', {
-        email: { type: String, null: false, index: true, limit: 30 },
+        email: { type: String, null: false, index: true, length: 100 },
         name: String,
         bio: Schema.Text,
         order : Number,
@@ -476,7 +480,13 @@ function setup(done) {
         timestamp: {type: Date, dataType: 'timestamp'}
     });
 
-    blankDatabase(db, done);
+    blankDatabase(db, function() {
+
+        db.automigrate(function(){
+            done();
+        });
+
+    });
 
 }
 
