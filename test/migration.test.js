@@ -8,64 +8,73 @@ describe('migrations', function() {
 
     before(setup);
 
-    it('should run migration', function(done) {
-        db.automigrate(function(){
-            done();
-        });
-    });
-
     it('UserData should have correct columns', function(done) {
         getFields('UserData', function(err, fields) {
-            assert.deepEqual(fields, { 
-                id: {
-                    Field: 'id',
-                    Type: 'int(11)',
-                    Null: 'NO',
-                    Key: 'PRI',
-                    Default: null,
-                    Extra: 'auto_increment' },
-                email: {
-                    Field: 'email',
-                    Type: 'varchar(30)',
-                    Null: 'NO',
-                    Key: 'MUL',
-                    Default: null,
-                    Extra: '' },
-                name: {
-                    Field: 'name',
-                    Type: 'varchar(255)',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' },
-                bio: {
-                    Field: 'bio',
-                    Type: 'text',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' },
-                birthDate: {
-                    Field: 'birthDate',
-                    Type: 'datetime',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' },
-                pendingPeriod: {
-                    Field: 'pendingPeriod',
-                    Type: 'int(11)',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' },
-                createdByAdmin: {
-                    Field: 'createdByAdmin',
-                    Type: 'tinyint(1)',
-                    Null: 'YES',
-                    Key: '',
-                    Default: null,
-                    Extra: '' }
+            assert.deepEqual(fields, {  
+               id:{  
+                  Field:'id',
+                  Type:'int(11)',
+                  Null:'NO',
+                  Key:'PRI',
+                  Default:null,
+                  Extra:'auto_increment'
+               },
+               email:{  
+                  Field:'email',
+                  Type:'varchar(100)',
+                  Null:'NO',
+                  Key:'MUL',
+                  Default:null,
+                  Extra:''
+               },
+               name:{  
+                  Field:'name',
+                  Type:'varchar(255)',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               bio:{  
+                  Field:'bio',
+                  Type:'longtext',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               order:{  
+                  Field:'order',
+                  Type:'int(11)',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               birthDate:{  
+                  Field:'birthDate',
+                  Type:'datetime',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               pendingPeriod:{  
+                  Field:'pendingPeriod',
+                  Type:'int(11)',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               },
+               createdByAdmin:{  
+                  Field:'createdByAdmin',
+                  Type:'tinyint(1)',
+                  Null:'YES',
+                  Key:'',
+                  Default:null,
+                  Extra:''
+               }
             });
             done();
         });    
@@ -75,7 +84,7 @@ describe('migrations', function() {
         // Note: getIdexes truncates multi-key indexes to the first member. Hence index1 is correct.
         getIndexes('UserData', function(err, fields) {
             assert.deepEqual(fields, { PRIMARY: 
-               { Table: 'userdata',
+               { Table: 'UserData',
                  Non_unique: 0,
                  Key_name: 'PRIMARY',
                  Seq_in_index: 1,
@@ -89,7 +98,7 @@ describe('migrations', function() {
                  Comment: '',
                  Index_comment: '' },
               email: 
-               { Table: 'userdata',
+               { Table: 'UserData',
                  Non_unique: 1,
                  Key_name: 'email',
                  Seq_in_index: 1,
@@ -103,7 +112,7 @@ describe('migrations', function() {
                  Comment: '',
                  Index_comment: '' },
               index0: 
-               { Table: 'userdata',
+               { Table: 'UserData',
                  Non_unique: 1,
                  Key_name: 'index0',
                  Seq_in_index: 1,
@@ -116,7 +125,7 @@ describe('migrations', function() {
                  Index_type: 'BTREE',
                  Comment: '',
                  Index_comment: '' } 
-            });
+             });
             done();
         });
     });
@@ -249,12 +258,12 @@ describe('migrations', function() {
             });
         }
 
-        UserData.create({email: 'test@example.com'}, function(err, user) {
+        UserData.create({email: 'test@example.com', order: 1}, function(err, user) {
             assert.ok(!err, 'Could not create user');
             userExists(function(yep) {
                 assert.ok(yep, 'User does not exist');
             });
-            UserData.defineProperty('email', { type: String, limit: 20 });
+            UserData.defineProperty('email', { type: String, length: 110 });
             UserData.defineProperty('name', {type: String, dataType: 'char', limit: 50});
             UserData.defineProperty('newProperty', {type: Number, unsigned: true, dataType: 'bigInt'});
             // UserData.defineProperty('pendingPeriod', false); This will not work as expected.
@@ -319,10 +328,13 @@ describe('migrations', function() {
     it('record should be multi updated', function(done) {
 
         // Create second user
-        UserData.create({email: 'youtnametwo@example.com'}, function(err, user) {
+        UserData.create({email: 'helloworld-helloworld@example.com', order: 3}, function(err, user) {
+            console.log(err);
+            assert(!err, 'User is not created');
             
             var userExists = function(email,id,cb) {
                 query('SELECT * FROM UserData', function(err, res) {
+                    console.log(arguments, id, res.length);
                     cb(!err && res[id].email == email);
                 });
             }
@@ -350,15 +362,22 @@ describe('migrations', function() {
                         assert.ok(yep, 'Email of user two has changed'); 
                 });
                 
-                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10},function(e,o){});
-                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10},function(e,o){});
-                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5},function(e,o){});
+                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10, order: 5},function(e,o){
+                    assert(!e, 'User is not created');
+                });
+                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10, order: 7},function(e,o){
+                    assert(!e, 'User is not created');
+                });
+                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5, order: 50},function(e,o){
+                    assert(!e, 'User is not created');
+                });
                 
                 UserData.update([{where:{pendingPeriod:{gt:9}}, update:{ bio:'expired' }}], function(err, o) {
                         
-                    // Verify that user 3 and 4 's bio is expired
+                    // Verify that user 3 and 4's bio is expired
                     query('SELECT * FROM UserData where pendingPeriod > 9 ', function(err, res) {
-                        assert.equal(res[0,1].bio,'expired',"When where greater conds bio expired");
+                        console.log(arguments);
+                        assert.equal(res[1].bio, 'expired', 'When where greater conds bio expired');
                     }); 
                         
                     // Verify that user 5 's bio is still null
@@ -427,9 +446,10 @@ function setup(done) {
     db = getSchema();    
     
     UserData = db.define('UserData', {
-        email: { type: String, null: false, index: true, limit: 30 },
+        email: { type: String, null: false, index: true, length: 100 },
         name: String,
         bio: Schema.Text,
+        order : Number,
         birthDate: Date,
         pendingPeriod: Number,
         createdByAdmin: Boolean,
@@ -460,7 +480,13 @@ function setup(done) {
         timestamp: {type: Date, dataType: 'timestamp'}
     });
 
-    blankDatabase(db, done);
+    blankDatabase(db, function() {
+
+        db.automigrate(function(){
+            done();
+        });
+
+    });
 
 }
 
