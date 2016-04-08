@@ -101,13 +101,14 @@ describe('basic-query-mysql', function () {
     UserData.all({
       where : {
         name : {
-          like : '%Len%'
+          like : '%cCa%'
         }
       }
     }, function (err, users) {
       should.exists(users);
       should.not.exists(err);
       users.should.have.lengthOf(1);
+      users[0].name.should.equal('Paul McCartney');
       done();
     });
   });
