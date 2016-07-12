@@ -185,6 +185,33 @@ describe('basic-query-mysql', function () {
     });
   });
 
+    describe('#updateOrCreate', function() {
+
+        it('should update existing record', function() {
+            var id;
+            return UserData.create({
+                name: 'anatoliy',
+                email: 'mail@example.co.uk',
+                order: 1602
+            })
+            .then(function(ud) {
+                id = ud.id;
+                console.log(ud);
+                return UserData.updateOrCreate({
+                    id: id,
+                    name: 'Anatoliy'
+                });
+            })
+            .then(function(ud) {
+                should.exist(ud);
+                ud.id.should.equal(id);
+                ud.name.should.equal('Anatoliy');
+                should.not.exist(ud.order);
+            });
+        });
+
+    });
+
 });  
 
 
