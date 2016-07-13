@@ -1,4 +1,10 @@
-## JugglingDB-MySQL [![Build Status](https://travis-ci.org/jugglingdb/mysql-adapter.png)](https://travis-ci.org/jugglingdb/mysql-adapter)
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
+[![Build status][build-image]][build-url]
+[![Test Coverage][coveralls-image]][coveralls-url]
+[![Dependency Status][dependencies-image]][dependencies-url]
+
+## JugglingDB-MySQL
 
 MySQL adapter for JugglingDB.
 
@@ -233,3 +239,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
+
+[coveralls-url]: https://coveralls.io/github/jugglingdb/mysql-adapter
+[coveralls-image]: https://coveralls.io/repos/github/jugglingdb/mysql-adapter/badge.svg
+[build-url]: https://circleci.com/gh/jugglingdb/mysql-adapter
+[build-image]: https://circleci.com/gh/jugglingdb/mysql-adapter.svg?style=shield
+[npm-image]: https://img.shields.io/npm/v/jugglingdb-mysql.svg
+[npm-url]: https://npmjs.org/package/jugglingdb-mysql
+[downloads-image]: https://img.shields.io/npm/dm/jugglingdb-mysql.svg
+[downloads-url]: https://npmjs.org/package/jugglingdb-mysql
+[dependencies-image]: https://david-dm.org/jugglingdb/mysql-adapter.svg
+[dependencies-url]: https://david-dm.org/jugglingdb/mysql-adapter
+
