@@ -185,6 +185,91 @@ describe('basic-query-mysql', function () {
     });
   });
 
+    it('should query by null', () => {
+        return UserData.findOne({ where: { email: null }})
+            .then(user => {
+                should.not.exist(user.email);
+            });
+    });
+
+    it('should support exclusion from empty set', () => {
+        return UserData.count({ email: { nin: [] }})
+            .then(count => {
+                count.should.equal(6); // full set
+            });
+    });
+
+    it('should support exclusion from non empty set', () => {
+        return UserData.count({ order: { nin: [ 1 ] }})
+            .then(count => {
+                count.should.equal(5);
+            });
+    });
+
+    it('should support inclusion in empty set', () => {
+        return UserData.count({ email: { inq: [] }})
+            .then(count => {
+                count.should.equal(0); // empty set
+            });
+    });
+
+    it('should query by "gt"', () => {
+        return UserData.count({ order: { gt: 2 }})
+            .then(count => {
+                count.should.equal(4);
+            });
+    });
+
+    it('should query by "gte"', () => {
+        return UserData.count({ order: { gte: 2 }})
+            .then(count => {
+                count.should.equal(5);
+            });
+    });
+
+    it('should query by "lt"', () => {
+        return UserData.count({ order: { lt: 2 }})
+            .then(count => {
+                count.should.equal(1);
+            });
+    });
+
+    it('should query by "lte"', () => {
+        return UserData.count({ order: { lte: 2 }})
+            .then(count => {
+                count.should.equal(2);
+            });
+    });
+
+    it.skip('should query by "ne"', () => {
+        return UserData.count({ order: { ne: 2 }})
+            .then(count => {
+                count.should.equal(5);
+            });
+    });
+
+    it.skip('should query by using "LIKE"', () => {
+        return UserData.count({ email: { like: '%b3atl3s%' }})
+            .then(count => {
+                count.should.equal(2);
+            });
+    });
+
+    it.skip('should query by using "NLIKE"', () => {
+        return UserData.count({ email: { nlike: '%paul%' }})
+            .then(count => {
+                count.should.equal(1);
+            });
+    });
+
+    it('should query by using "BETWEEN"', () => {
+        return UserData.count({ order: { between: [ 3, 5 ] }})
+            .then(count => {
+                count.should.equal(3);
+            });
+    });
+
+
 });  
 
 
