@@ -5,15 +5,13 @@ var Schema = require('jugglingdb').Schema;
 var db, settings, adapter, EnumModel, ANIMAL_ENUM;
 
 describe('MySQL specific datatypes', function() {
-     
+
     before(setup);
-    
+
     it('should run migration', function(done) {
-        db.automigrate(function(){
-            done();
-        });
+        db.automigrate(done);
     });
-    
+
     it('An enum should parse itself', function(done) {
         assert.equal(ANIMAL_ENUM.CAT, ANIMAL_ENUM('cat'));
         assert.equal(ANIMAL_ENUM.CAT, ANIMAL_ENUM('CAT'));
@@ -24,20 +22,25 @@ describe('MySQL specific datatypes', function() {
         assert.equal(ANIMAL_ENUM(0), '');
         done();
     });
-    
-    it('should create a model instance with Enums', function(done) {
-       var em = EnumModel.create({animal: ANIMAL_ENUM.CAT, condition: 'sleepy', mood: 'happy'}, function(err, obj) {
-            assert.ok(!err);
-            assert.equal(obj.condition, 'sleepy');
-            EnumModel.findOne({where: {animal: ANIMAL_ENUM.CAT}}, function(err, found){
-                assert.ok(!err);
+
+    it('should create a model instance with Enums', () => {
+        return EnumModel.create({
+            animal: ANIMAL_ENUM.CAT,
+            condition: 'sleepy',
+            mood: 'happy'
+        })
+            .then(obj => {
+                assert.equal(obj.condition, 'sleepy');
+                return EnumModel.findOne({
+                    where: {animal: ANIMAL_ENUM.CAT}
+                });
+            })
+            .then(found => {
                 assert.equal(found.mood, 'happy');
                 assert.equal(found.animal, ANIMAL_ENUM.CAT);
-                done();
             });
-       });
     });
-    
+
     // wtf?
     it.skip('should fail spectacularly with invalid enum values', function(done) {
        var em = EnumModel.create({animal: 'horse', condition: 'sleepy', mood: 'happy'}, function(err, obj) {
@@ -73,16 +76,16 @@ describe('MySQL specific datatypes', function() {
 function setup(done) {
 
     require('./init.js');
-    
+
     db = getSchema();    
-    
+
     ANIMAL_ENUM = db.EnumFactory('dog', 'cat', 'mouse');
-    
+
     EnumModel = db.define('EnumModel', {
         animal: { type: ANIMAL_ENUM, null: false },
         condition: { type: db.EnumFactory('hungry', 'sleepy', 'thirsty') },
         mood: { type: db.EnumFactory('angry', 'happy', 'sad') },
-        name: { type : String, datatype: "varchar", length : 3 }
+        name: { type : String, datatype: 'varchar', length : 3 }
     });
 
     blankDatabase(db, done);

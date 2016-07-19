@@ -4,17 +4,19 @@
   "description": "MySQL adapter for JugglingDB",
   "main": "index.js",
   "scripts": {
-    "test": "make test",
+    "create-database": "mysql -u root -e 'create database myapp_test;'",
+    "test": "mocha --bail --check-leaks test/",
     "test-coverage": "istanbul cover node_modules/.bin/_mocha -- --reporter landing --check-leaks test/",
     "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
   },
   "dependencies": {
-    "jugglingdb": "2.0.0-rc6",
-    "mysql": "^2.2.0",
+    "jugglingdb": "https://github.com/1602/jugglingdb/archive/master.tar.gz",
+    "mysql": "^2.11.1",
     "uuid": "^2.0.1"
   },
   "devDependencies": {
     "coffee-script": "latest",
+    "eslint": "^3.1.0",
     "istanbul": "^0.4.4",
     "mocha": "^2.4.3",
     "semicov": "~0.1.1-2",
