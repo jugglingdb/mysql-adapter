@@ -2,6 +2,10 @@ machine:
   node:
     version: 6.3.0
 
+database:
+  override:
+    - "mysql -u root -e 'create database myapp_test;'"
+
 test:
   override:
     - nvm use 6.3.0 && npm run test-ci
