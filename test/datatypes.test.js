@@ -1,147 +1,126 @@
-var should = require('./init.js');
-var assert = require('assert');
-var Schema = require('jugglingdb').Schema;
+require('./init.js');
+const assert = require('assert');
+const expect = require('expect');
 
-var db, settings, adapter, EnumModel, ANIMAL_ENUM;
+/* global getSchema */ 
+/* eslint max-nested-callbacks: [2, 5] */
 
 describe('MySQL specific datatypes', function() {
 
-    before(setup);
+    let db;
 
-    it('should run migration', function(done) {
-        db.automigrate(done);
-    });
+    beforeEach(() => db = getSchema());
 
-    it('An enum should parse itself', function(done) {
-        assert.equal(ANIMAL_ENUM.CAT, ANIMAL_ENUM('cat'));
-        assert.equal(ANIMAL_ENUM.CAT, ANIMAL_ENUM('CAT'));
-        assert.equal(ANIMAL_ENUM.CAT, ANIMAL_ENUM(2));
-        assert.equal(ANIMAL_ENUM.CAT, 'cat');
-        assert.equal(ANIMAL_ENUM(null), null);
-        assert.equal(ANIMAL_ENUM(''), '');
-        assert.equal(ANIMAL_ENUM(0), '');
-        done();
-    });
+    afterEach(() => db.disconnect());
 
-    it('should create a model instance with Enums', () => {
-        return EnumModel.create({
-            animal: ANIMAL_ENUM.CAT,
-            condition: 'sleepy',
-            mood: 'happy'
-        })
-            .then(obj => {
-                assert.equal(obj.condition, 'sleepy');
-                return EnumModel.findOne({
-                    where: {animal: ANIMAL_ENUM.CAT}
-                });
-            })
-            .then(found => {
-                assert.equal(found.mood, 'happy');
-                assert.equal(found.animal, ANIMAL_ENUM.CAT);
+    describe('enum', () => {
+
+        let EnumModel, ANIMAL_ENUM;
+
+        beforeEach(() => {
+
+            ANIMAL_ENUM = db.EnumFactory('dog', 'cat', 'mouse');
+
+            EnumModel = db.define('EnumModel', {
+                animal: {
+                    type: ANIMAL_ENUM,
+                    null: false
+                },
+                condition: {
+                    type: db.EnumFactory('hungry', 'sleepy', 'thirsty')
+                },
+                mood: {
+                    type: db.EnumFactory('angry', 'happy', 'sad')
+                }
             });
-    });
+
+            return db.automigrate();
+        });
+
+        it('An enum should parse itself', () => {
+            assert.equal(ANIMAL_ENUM.CAT, ANIMAL_ENUM('cat'));
+            assert.equal(ANIMAL_ENUM.CAT, ANIMAL_ENUM('CAT'));
+            assert.equal(ANIMAL_ENUM.CAT, ANIMAL_ENUM(2));
+            assert.equal(ANIMAL_ENUM.CAT, 'cat');
+            assert.equal(ANIMAL_ENUM(null), null);
+            assert.equal(ANIMAL_ENUM(''), '');
+            assert.equal(ANIMAL_ENUM(0), '');
+        });
+
+        it('should create a model instance with Enums', () => {
+            return EnumModel.create({
+                animal: ANIMAL_ENUM.CAT,
+                condition: 'sleepy',
+                mood: 'happy'
+            })
+                .then(obj => {
+                    assert.equal(obj.condition, 'sleepy');
+                    return EnumModel.findOne({
+                        where: {animal: ANIMAL_ENUM.CAT}
+                    });
+                })
+                .then(found => {
+                    assert.equal(found.mood, 'happy');
+                    assert.equal(found.animal, ANIMAL_ENUM.CAT);
+                });
+        });
 
     // wtf?
-    it.skip('should fail spectacularly with invalid enum values', function(done) {
-       var em = EnumModel.create({animal: 'horse', condition: 'sleepy', mood: 'happy'}, function(err, obj) {
-            assert.ok(!err);
-            EnumModel.find(obj.id, function(err, found){
-                assert.ok(!err);
-                assert.equal(found.animal, ''); // MySQL fun.
-                assert.equal(found.animal, 0);
-                done();
-            });
-       });
+    // it.skip('should fail spectacularly with invalid enum values', function(done) {
+    //    var em = EnumModel.create({animal: 'horse', condition: 'sleepy', mood: 'happy'}, function(err, obj) {
+    //         assert.ok(!err);
+    //         EnumModel.find(obj.id, function(err, found){
+    //             assert.ok(!err);
+    //             assert.equal(found.animal, ''); // MySQL fun.
+    //             assert.equal(found.animal, 0);
+    //             done();
+    //         });
+    //    });
+    // });
+
+    // it.skip('should limit the length of string fields', function(done) {
+    //    var em = EnumModel.create({animal: ANIMAL_ENUM.CAT, condition: 'sleepy', mood: 'happy', name : "penny"}, function(err, obj) {
+    //        console.log(err);
+    //         assert.ok(!err);
+    //         EnumModel.find(obj.id, function(err, found){
+    //             assert.ok(!err);
+    //             assert.equal(found.name, 'pen');
+    //             done();
+    //         });
+    //    });
+    // });
+
     });
 
-    it.skip('should limit the length of string fields', function(done) {
-       var em = EnumModel.create({animal: ANIMAL_ENUM.CAT, condition: 'sleepy', mood: 'happy', name : "penny"}, function(err, obj) {
-           console.log(err);
-            assert.ok(!err);
-            EnumModel.find(obj.id, function(err, found){
-                assert.ok(!err);
-                assert.equal(found.name, 'pen');
-                done();
-            });
-       });
-    });
+    describe('string', () => {
 
-    it('should disconnect when done', function(done) {
-        db.disconnect();
-        done();
+        beforeEach(() => {
+            db.define('Model', {
+                name: {
+                    type : String,
+                    length : 3,
+                    charset: 'latin1',
+                    collation: 'latin1_general_ci',
+                    index: true
+                }
+            });
+
+            return db.automigrate();
+        });
+
+        it('should be varchar by default', () => {
+            return db.adapter.getTableInfo('Model')
+                .then(info => {
+                    const field = info.fields.find(f => f.Field === 'name');
+                    expect(field).toExist();
+                    expect(field.Type).toBe('varchar(3)');
+                    expect(field.Null).toBe('YES');
+                    expect(info.sql).toContain(
+                        '`name` varchar(3) CHARACTER SET latin1 COLLATE latin1_general_ci'
+                    );
+                });
+        });
+
     });
 
 });
-
-function setup(done) {
-
-    require('./init.js');
-
-    db = getSchema();    
-
-    ANIMAL_ENUM = db.EnumFactory('dog', 'cat', 'mouse');
-
-    EnumModel = db.define('EnumModel', {
-        animal: { type: ANIMAL_ENUM, null: false },
-        condition: { type: db.EnumFactory('hungry', 'sleepy', 'thirsty') },
-        mood: { type: db.EnumFactory('angry', 'happy', 'sad') },
-        name: { type : String, datatype: 'varchar', length : 3 }
-    });
-
-    blankDatabase(db, done);
-
-}
-
-var query = function (sql, cb) {
-    db.adapter.query(sql, cb);
-};
-
-var blankDatabase = function (db, cb) {
-    var dbn = db.settings.database;
-    var cs = db.settings.charset;
-    var co = db.settings.collation;
-    query('DROP DATABASE IF EXISTS ' + dbn, function(err) {
-        var q = 'CREATE DATABASE ' + dbn;
-        if(cs){
-            q += ' CHARACTER SET ' + cs;
-        }
-        if(co){
-            q += ' COLLATE ' + co;
-        }
-        query(q, function(err) {
-            query('USE '+ dbn, cb);
-        });
-    });
-};
-
-getFields = function (model, cb) {
-    query('SHOW FIELDS FROM ' + model, function(err, res) {
-        if (err) {
-            cb(err);
-        } else {
-            var fields = {};
-            res.forEach(function(field){
-                fields[field.Field] = field;
-            });
-            cb(err, fields);
-        }
-    });
-}
-
-getIndexes = function (model, cb) {
-    query('SHOW INDEXES FROM ' + model, function(err, res) {
-        if (err) {
-            console.log(err);
-            cb(err);
-        } else {
-            var indexes = {};
-            // Note: this will only show the first key of compound keys
-            res.forEach(function(index) {
-                if (parseInt(index.Seq_in_index, 10) == 1) {
-                    indexes[index.Key_name] = index 
-                }
-            });
-            cb(err, indexes);
-        }
-    });
-};

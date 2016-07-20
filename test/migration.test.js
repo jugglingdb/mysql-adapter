@@ -10,7 +10,7 @@ const Schema = require('jugglingdb').Schema;
 
 let UserData, NumberData, DateData; 
 
-describe.only('migrations', function() {
+describe('migrations', function() {
 
     before(setup);
 
@@ -193,7 +193,7 @@ describe.only('migrations', function() {
             done();
         });
     });
-    
+
     it('NumberData should have correct columns', function(done) {
         getFields('NumberData', function(err, fields) {
             assert.deepEqual(fields, { 
