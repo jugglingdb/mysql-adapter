@@ -1,4 +1,5 @@
 const should = require('./init.js');
+const Schema = require('jugglingdb').Schema;
 let db, UserData;
 
 /* global getSchema */
@@ -12,7 +13,9 @@ describe('basic-query-mysql', function() {
                     name : String,
                     email : String,
                     role : String,
-                    order : Number
+                    order : Number,
+                    bio: Schema.Text,
+                    prefs: Schema.JSON
                 });
 
                 return db.automigrate();
