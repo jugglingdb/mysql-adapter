@@ -1,80 +1,87 @@
-var should = require('./init.js');
-var assert = require('assert');
-var Schema = require('jugglingdb').Schema;
+'use strict';
 
-var db, UserData, StringData, NumberData, DateData; 
+/* global getSchema */
+/* eslint max-nested-callbacks: [2, 5] */
 
-describe('migrations', function() {
+const should = require('./init.js');
+const db = getSchema();    
+const assert = require('assert');
+const Schema = require('jugglingdb').Schema;
+
+let UserData, NumberData, DateData; 
+
+describe.only('migrations', function() {
 
     before(setup);
 
     it('UserData should have correct columns', function(done) {
         getFields('UserData', function(err, fields) {
+            should.not.exist(err);
             assert.deepEqual(fields, {  
-               id:{  
-                  Field:'id',
-                  Type:'int(11)',
-                  Null:'NO',
-                  Key:'PRI',
-                  Default:null,
-                  Extra:'auto_increment'
-               },
-               email:{  
-                  Field:'email',
-                  Type:'varchar(100)',
-                  Null:'NO',
-                  Key:'MUL',
-                  Default:null,
-                  Extra:''
-               },
-               name:{  
-                  Field:'name',
-                  Type:'varchar(255)',
-                  Null:'YES',
-                  Key:'',
-                  Default:null,
-                  Extra:''
-               },
-               bio:{  
-                  Field:'bio',
-                  Type:'longtext',
-                  Null:'YES',
-                  Key:'',
-                  Default:null,
-                  Extra:''
-               },
-               order:{  
-                  Field:'order',
-                  Type:'int(11)',
-                  Null:'YES',
-                  Key:'',
-                  Default:null,
-                  Extra:''
-               },
-               birthDate:{  
-                  Field:'birthDate',
-                  Type:'datetime',
-                  Null:'YES',
-                  Key:'',
-                  Default:null,
-                  Extra:''
-               },
-               pendingPeriod:{  
-                  Field:'pendingPeriod',
-                  Type:'int(11)',
-                  Null:'YES',
-                  Key:'',
-                  Default:null,
-                  Extra:''
-               },
-               createdByAdmin:{  
-                  Field:'createdByAdmin',
-                  Type:'tinyint(1)',
-                  Null:'YES',
-                  Key:'',
-                  Default:null,
-                  Extra:''
-               }
+                id: {  
+                    Field:'id',
+                    Type:'int(11)',
+                    Null:'NO',
+                    Key:'PRI',
+                    Default:null,
+                    Extra:'auto_increment'
+                },
+                email:{  
+                    Field:'email',
+                    Type:'varchar(100)',
+                    Null:'NO',
+                    Key:'MUL',
+                    Default:null,
+                    Extra:''
+                },
+                name:{  
+                    Field:'name',
+                    Type:'varchar(255)',
+                    Null:'YES',
+                    Key:'',
+                    Default:null,
+                    Extra:''
+                },
+                bio:{  
+                    Field:'bio',
+                    Type:'longtext',
+                    Null:'YES',
+                    Key:'',
+                    Default:null,
+                    Extra:''
+                },
+                order:{  
+                    Field:'order',
+                    Type:'int(11)',
+                    Null:'YES',
+                    Key:'',
+                    Default:null,
+                    Extra:''
+                },
+                birthDate:{  
+                    Field:'birthDate',
+                    Type:'datetime',
+                    Null:'YES',
+                    Key:'',
+                    Default:null,
+                    Extra:''
+                },
+                pendingPeriod:{  
+                    Field:'pendingPeriod',
+                    Type:'int(11)',
+                    Null:'YES',
+                    Key:'',
+                    Default:null,
+                    Extra:''
+                },
+                createdByAdmin:{  
+                    Field:'createdByAdmin',
+                    Type:'tinyint(1)',
+                    Null:'YES',
+                    Key:'',
+                    Default:null,
+                    Extra:''
+                }
             });
             done();
         });    
@@ -83,49 +90,50 @@ describe('migrations', function() {
     it('UserData should have correct indexes', function(done) {
         // Note: getIdexes truncates multi-key indexes to the first member. Hence index1 is correct.
         getIndexes('UserData', function(err, fields) {
-            assert.deepEqual(removeTableNames(fields), { PRIMARY: 
-               { 
-                 Non_unique: 0,
-                 Key_name: 'PRIMARY',
-                 Seq_in_index: 1,
-                 Column_name: 'id',
-                 Collation: 'A',
-                 Cardinality: 0,
-                 Sub_part: null,
-                 Packed: null,
-                 Null: '',
-                 Index_type: 'BTREE',
-                 Comment: '',
-                 Index_comment: '' },
-              email: 
-               { 
-                 Non_unique: 1,
-                 Key_name: 'email',
-                 Seq_in_index: 1,
-                 Column_name: 'email',
-                 Collation: 'A',
-                 Cardinality: 0,
-                 Sub_part: null,
-                 Packed: null,
-                 Null: '',
-                 Index_type: 'BTREE',
-                 Comment: '',
-                 Index_comment: '' },
-              index0: 
-               { 
-                 Non_unique: 1,
-                 Key_name: 'index0',
-                 Seq_in_index: 1,
-                 Column_name: 'email',
-                 Collation: 'A',
-                 Cardinality: 0,
-                 Sub_part: null,
-                 Packed: null,
-                 Null: '',
-                 Index_type: 'BTREE',
-                 Comment: '',
-                 Index_comment: '' } 
-             });
+            assert.deepEqual(removeTableNames(fields), {
+                PRIMARY: { 
+                    'Non_unique': 0,
+                    'Key_name': 'PRIMARY',
+                    'Seq_in_index': 1,
+                    'Column_name': 'id',
+                    'Collation': 'A',
+                    'Cardinality': 0,
+                    'Sub_part': null,
+                    'Packed': null,
+                    'Null': '',
+                    'Index_type': 'BTREE',
+                    'Comment': '',
+                    'Index_comment': ''
+                },
+                email: { 
+                    'Non_unique': 1,
+                    'Key_name': 'email',
+                    'Seq_in_index': 1,
+                    'Column_name': 'email',
+                    'Collation': 'A',
+                    'Cardinality': 0,
+                    'Sub_part': null,
+                    'Packed': null,
+                    'Null': '',
+                    'Index_type': 'BTREE',
+                    'Comment': '',
+                    'Index_comment': ''
+                },
+                index0: { 
+                    'Non_unique': 1,
+                    'Key_name': 'index0',
+                    'Seq_in_index': 1,
+                    'Column_name': 'email',
+                    'Collation': 'A',
+                    'Cardinality': 0,
+                    'Sub_part': null,
+                    'Packed': null,
+                    'Null': '',
+                    'Index_type': 'BTREE',
+                    'Comment': '',
+                    'Index_comment': ''
+                } 
+            });
             done();
         });
 
@@ -189,41 +197,46 @@ describe('migrations', function() {
     it('NumberData should have correct columns', function(done) {
         getFields('NumberData', function(err, fields) {
             assert.deepEqual(fields, { 
-              id: 
-               { Field: 'id',
-                 Type: 'int(11)',
-                 Null: 'NO',
-                 Key: 'PRI',
-                 Default: null,
-                 Extra: 'auto_increment' },
-              number: 
-               { Field: 'number',
-                 Type: 'decimal(10,3) unsigned',
-                 Null: 'NO',
-                 Key: 'MUL',
-                 Default: null,
-                 Extra: '' },
-              tinyInt: 
-               { Field: 'tinyInt',
-                 Type: 'tinyint(2)',
-                 Null: 'YES',
-                 Key: '',
-                 Default: null,
-                 Extra: '' },
-              mediumInt: 
-               { Field: 'mediumInt',
-                 Type: 'mediumint(8) unsigned',
-                 Null: 'YES',
-                 Key: '',
-                 Default: null,
-                 Extra: '' },
-              floater: 
-               { Field: 'floater',
-                 Type: 'double(14,6)',
-                 Null: 'YES',
-                 Key: '',
-                 Default: null,
-                 Extra: '' } 
+                id: {
+                    Field: 'id',
+                    Type: 'int(11)',
+                    Null: 'NO',
+                    Key: 'PRI',
+                    Default: null,
+                    Extra: 'auto_increment'
+                },
+                number: {
+                    Field: 'number',
+                    Type: 'decimal(10,3) unsigned',
+                    Null: 'NO',
+                    Key: 'MUL',
+                    Default: null,
+                    Extra: ''
+                },
+                tinyInt: {
+                    Field: 'tinyInt',
+                    Type: 'tinyint(2)',
+                    Null: 'YES',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                mediumInt: {
+                    Field: 'mediumInt',
+                    Type: 'mediumint(8) unsigned',
+                    Null: 'YES',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                floater: {
+                    Field: 'floater',
+                    Type: 'double(14,6)',
+                    Null: 'YES',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                } 
             });
             done();
         });
@@ -232,41 +245,45 @@ describe('migrations', function() {
     it('DateData should have correct columns', function(done) {
         getFields('DateData', function(err, fields) {
             assert.deepEqual(fields, { 
-              id: 
-               { Field: 'id',
-                 Type: 'int(11)',
-                 Null: 'NO',
-                 Key: 'PRI',
-                 Default: null,
-                 Extra: 'auto_increment' },
-              dateTime: 
-               { Field: 'dateTime',
-                 Type: 'datetime',
-                 Null: 'YES',
-                 Key: '',
-                 Default: null,
-                 Extra: '' },
-              timestamp: 
-               { Field: 'timestamp',
-                 Type: 'timestamp',
-                 Null: 'YES',
-                 Key: '',
-                 Default: null,
-                 Extra: '' } 
+                id: {
+                    Field: 'id',
+                    Type: 'int(11)',
+                    Null: 'NO',
+                    Key: 'PRI',
+                    Default: null,
+                    Extra: 'auto_increment'
+                },
+                dateTime: {
+                    Field: 'dateTime',
+                    Type: 'datetime',
+                    Null: 'YES',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                },
+                timestamp: {
+                    Field: 'timestamp',
+                    Type: 'timestamp',
+                    Null: 'YES',
+                    Key: '',
+                    Default: null,
+                    Extra: ''
+                } 
             });
             done();
         });
     });
     
     it('should autoupgrade', function(done) {
-        var userExists = function(cb) {
+        const userExists = function(cb) {
             query('SELECT * FROM UserData', function(err, res) {
-                cb(!err && res[0].email == 'test@example.com');
+                cb(!err && res[0].email === 'test@example.com');
             });
-        }
+        };
 
         UserData.create({email: 'test@example.com', order: 1}, function(err, user) {
             assert.ok(!err, 'Could not create user');
+            should.exist(user);
             userExists(function(yep) {
                 assert.ok(yep, 'User does not exist');
             });
@@ -274,7 +291,8 @@ describe('migrations', function() {
             UserData.defineProperty('name', {type: String, dataType: 'char', limit: 50});
             UserData.defineProperty('newProperty', {type: Number, unsigned: true, dataType: 'bigInt'});
             // UserData.defineProperty('pendingPeriod', false); This will not work as expected.
-            db.autoupdate( function(err) {
+            db.autoupdate(function(err) {
+                should.not.exist(err);
                 getFields('UserData', function(err, fields) {
                     // change nullable for email
                     assert.equal(fields.email.Null, 'YES', 'Email does not allow null');
@@ -298,96 +316,96 @@ describe('migrations', function() {
     });
 
     // TODO: rewrite this test
-    it.skip('record should be single updated', function(done) {
+    // it.skip('record should be single updated', function(done) {
 
-            var userExists = function(cb) {
-                query('SELECT * FROM UserData', function(err, res) {
-                    cb(!err && res[0].email == 'yourname@newname.com');
-                });
-            }
-            
-            UserData.update({where:{id:'1'}, update:{ email:'yourname@newname.com' }}  , function(err, o) {
-                
-                assert.equal(err,null);
+    //         const userExists = function(cb) {
+    //             query('SELECT * FROM UserData', function(err, res) {
+    //                 cb(!err && res[0].email === 'yourname@newname.com');
+    //             });
+    //         }
+    //         
+    //         UserData.update({where:{id:'1'}, update:{ email:'yourname@newname.com' }}  , function(err, o) {
+    //             
+    //             assert.equal(err,null);
 
-                userExists(function(yep) {
-                        assert.ok(yep, 'Email has changed');
-                });
+    //             userExists(function(yep) {
+    //                     assert.ok(yep, 'Email has changed');
+    //             });
 
-                // err when where missing
-                UserData.update({ update:{email:'yourname@newname.com' }}, function(err, o) {
-                    assert.equal(err, "Required where", " no error when where field is missing ");
-                });    
+    //             // err when where missing
+    //             UserData.update({ update:{email:'yourname@newname.com' }}, function(err, o) {
+    //                 assert.equal(err, "Required where", " no error when where field is missing ");
+    //             });    
 
-                // err when where update
-                UserData.update({where:{id:'1'}}, function(err, o) {
-                    assert.equal(err, "Required update", " no error when update field is missing ");
-                });
+    //             // err when where update
+    //             UserData.update({where:{id:'1'}}, function(err, o) {
+    //                 assert.equal(err, "Required update", " no error when update field is missing ");
+    //             });
 
-                // Update set null and not is null
-                UserData.update({ update:{email:null }  ,where:{id:'1'} }, function(err, o) {
-                    assert.equal(o.meta.changes, 1,"Update set null ");
-                    done();
-                });
+    //             // Update set null and not is null
+    //             UserData.update({ update:{email:null }  ,where:{id:'1'} }, function(err, o) {
+    //                 assert.equal(o.meta.changes, 1,"Update set null ");
+    //                 done();
+    //             });
 
-            });
-    });   
+    //         });
+    // });   
 
-    it.skip('record should be multi updated', function(done) {
+    // it.skip('record should be multi updated', function(done) {
 
-        // Create second user
-        UserData.create({email: 'helloworld-helloworld@example.com', order: 3}, function(err, user) {
-            console.log(err);
-            assert(!err, 'User is not created');
-            
-            var userExists = function(email,id,cb) {
-                query('SELECT * FROM UserData', function(err, res) {
-                    cb(!err && res[id].email == email);
-                });
-            }
+    //     // Create second user
+    //     UserData.create({email: 'helloworld-helloworld@example.com', order: 3}, function(err, user) {
+    //         console.log(err);
+    //         assert(!err, 'User is not created');
+    //         
+    //         var userExists = function(email,id,cb) {
+    //             query('SELECT * FROM UserData', function(err, res) {
+    //                 cb(!err && res[id].email == email);
+    //             });
+    //         }
 
-            // do multi row update
-            UserData.update([
-                {where:{id:'1'}, update:{ email:'userone@newname.com' }},
-                {where:{id:'2'}, update:{ email:'usertwo@newname.com' }}]  , function(err, o) {
-                assert.equal(err, null);
+    //         // do multi row update
+    //         UserData.update([
+    //             {where:{id:'1'}, update:{ email:'userone@newname.com' }},
+    //             {where:{id:'2'}, update:{ email:'usertwo@newname.com' }}]  , function(err, o) {
+    //             assert.equal(err, null);
 
-                // Verify user two email update 
-                userExists('userone@newname.com',0,function(yep) {
-                        assert.ok(yep, 'Email of user one has changed');
-                });
-                
-                // Verify user two email update 
-                userExists('usertwo@newname.com',1,function(yep) {
-                        assert.ok(yep, 'Email of user two has changed'); 
-                });
-                
-                UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10, order: 5},function(e,o){
-                    assert(!e, 'User is not created');
-                });
-                UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10, order: 7},function(e,o){
-                    assert(!e, 'User is not created');
-                });
-                UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5, order: 50},function(e,o){
-                    assert(!e, 'User is not created');
-                });
-                
-                UserData.update([{where:{pendingPeriod:{gt:9}}, update:{ bio:'expired' }}], function(err, o) {
-                        
-                    // Verify that user 3 and 4's bio is expired
-                    query('SELECT * FROM UserData where pendingPeriod > 9 ', function(err, res) {
-                        assert.equal(res[1].bio, 'expired', 'When where greater conds bio expired');
-                    }); 
-                        
-                    // Verify that user 5 's bio is still null
-                    query('SELECT * FROM UserData where id=5', function(err, res) {
-                        assert.equal(res[0].bio,null,"When where greater conds bio null");
-                        done();
-                    });
-                });
-            });
-        });
-    });
+    //             // Verify user two email update 
+    //             userExists('userone@newname.com',0,function(yep) {
+    //                     assert.ok(yep, 'Email of user one has changed');
+    //             });
+    //             
+    //             // Verify user two email update 
+    //             userExists('usertwo@newname.com',1,function(yep) {
+    //                     assert.ok(yep, 'Email of user two has changed'); 
+    //             });
+    //             
+    //             UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10, order: 5},function(e,o){
+    //                 assert(!e, 'User is not created');
+    //             });
+    //             UserData.create({email: 'userfouremail@example.com',name:"ok",pendingPeriod:10, order: 7},function(e,o){
+    //                 assert(!e, 'User is not created');
+    //             });
+    //             UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5, order: 50},function(e,o){
+    //                 assert(!e, 'User is not created');
+    //             });
+    //             
+    //             UserData.update([{where:{pendingPeriod:{gt:9}}, update:{ bio:'expired' }}], function(err, o) {
+    //                     
+    //                 // Verify that user 3 and 4's bio is expired
+    //                 query('SELECT * FROM UserData where pendingPeriod > 9 ', function(err, res) {
+    //                     assert.equal(res[1].bio, 'expired', 'When where greater conds bio expired');
+    //                 }); 
+    //                     
+    //                 // Verify that user 5 's bio is still null
+    //                 query('SELECT * FROM UserData where id=5', function(err, res) {
+    //                     assert.equal(res[0].bio,null,"When where greater conds bio null");
+    //                     done();
+    //                 });
+    //             });
+    //         });
+    //     });
+    // });
 
     it('should check actuality of schema', function(done) {
         // 'drop column'
@@ -397,7 +415,7 @@ describe('migrations', function() {
             // UserData.defineProperty('email', false); Can't undefine currently.
             UserData.schema.isActual(function(err, ok) {
                 assert.ok(!ok, 'schema is actual (shouldn\t be)');
-                done()
+                done();
             });
         });
     });
@@ -433,17 +451,13 @@ describe('migrations', function() {
     
     it('should disconnect when done', function(done) {
         db.disconnect();
-        done()
+        done();
     });
 
 });
 
 function setup(done) {
 
-    require('./init.js');
-    
-    db = getSchema();    
-    
     UserData = db.define('UserData', {
         email: { type: String, null: false, index: true, length: 100 },
         name: String,
@@ -453,13 +467,12 @@ function setup(done) {
         pendingPeriod: Number,
         createdByAdmin: Boolean,
     } , { indexes: {
-            index0: {
-                columns: 'email, createdByAdmin'
-            }
+        index0: {
+            columns: 'email, createdByAdmin'
         }
-    });
+    }});
 
-    StringData = db.define('StringData', {
+    db.define('StringData', {
         smallString: {type: String, null: false, index: true, dataType: 'char', limit: 127},
         mediumString: {type: String, null: false,  dataType: 'varchar', limit: 255},
         tinyText: {type: String, dataType: 'tinyText'},
@@ -494,30 +507,38 @@ const query = function(sql, cb) {
         .then(r => cb(null, r), cb);
 };
 
-var blankDatabase = function (db, cb) {
-    var dbn = db.settings.database;
-    var cs = db.settings.charset;
-    var co = db.settings.collation;
+function blankDatabase(db, cb) {
+    const dbn = db.settings.database;
+    const cs = db.settings.charset;
+    const co = db.settings.collation;
+
     query('DROP DATABASE IF EXISTS ' + dbn, function(err) {
-        var q = 'CREATE DATABASE ' + dbn;
+        if (err) {
+            return cb(err);
+        }
+
+        let q = 'CREATE DATABASE ' + dbn;
+
         if(cs){
             q += ' CHARACTER SET ' + cs;
         }
+
         if(co){
             q += ' COLLATE ' + co;
         }
-        query(q, function(err) {
+
+        query(q, function() {
             query('USE '+ dbn, cb);
         });
     });
-};
+}
 
-getFields = function(model, cb) {
+function getFields(model, cb) {
     query('SHOW FIELDS FROM ' + model, function(err, res) {
         if (err) {
             cb(err);
         } else {
-            var fields = {};
+            const fields = {};
             res.forEach(function(field){
                 fields[field.Field] = field;
             });
@@ -526,26 +547,21 @@ getFields = function(model, cb) {
     });
 }
 
-getIndexes = function (model, cb) {
+function getIndexes(model, cb) {
     query('SHOW INDEXES FROM ' + model, function(err, res) {
         if (err) {
             //console.log(err);
             cb(err);
         } else {
-            var indexes = {};
+            const indexes = {};
             // Note: this will only show the first key of compound keys
             res.forEach(function(index) {
-                if (parseInt(index.Seq_in_index, 10) == 1) {
-                    indexes[index.Key_name] = index 
+                if (parseInt(index.Seq_in_index, 10) === 1) {
+                    indexes[index.Key_name] = index;
                 }
             });
             cb(err, indexes);
         }
     });
-};
-
-
-
-
-
+}
 
