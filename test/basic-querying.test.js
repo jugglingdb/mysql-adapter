@@ -268,7 +268,6 @@ describe('basic-query-mysql', function() {
             });
     });
 
-
 });  
 
 
@@ -277,7 +276,8 @@ function seed() {
         name : 'John Lennon',
         mail : 'john@b3atl3s.co.uk',
         role : 'lead',
-        order : 2
+        order : 2,
+        prefs: { foo: 'bar' }
     }, {
         name : 'Paul McCartney',
         mail : 'paul@b3atl3s.co.uk',
