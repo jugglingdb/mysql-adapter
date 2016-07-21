@@ -615,6 +615,7 @@ describe('migrations', function() {
                         return db.autoupdate();
                     });
             });
+
         });
 
     });
