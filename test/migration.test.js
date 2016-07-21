@@ -618,6 +618,49 @@ describe('migrations', function() {
 
         });
 
+        describe('change column', () => {
+
+            it('should change type of integer column', () => {
+                db.define('Model', { a: {
+                    type: Number,
+                    dataType: 'bigint',
+                    unsigned: true
+                } });
+
+                return db.automigrate()
+                    .then(() => {
+                        const props = db.models['Model'].properties;
+                        props.a.unsigned = false;
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql[0]).toBe('CHANGE COLUMN `a` `a` bigint(20) NULL');
+                        expect(sql.length).toBe(1);
+                        return db.autoupdate();
+                    });
+            });
+
+            it('should change type of integer column', () => {
+                db.define('Model', { a: {
+                    type: Number,
+                    dataType: 'bigint',
+                    unsigned: true
+                } });
+
+                return db.automigrate()
+                    .then(() => {
+                        const props = db.models['Model'].properties;
+                        props.a.unsigned = false;
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql[0]).toBe('CHANGE COLUMN `a` `a` bigint(20) NULL');
+                        expect(sql.length).toBe(1);
+                        return db.autoupdate();
+                    });
+            });
+        });
+
     });
 
 });
