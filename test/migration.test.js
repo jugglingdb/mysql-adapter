@@ -4,7 +4,8 @@
 /* eslint max-nested-callbacks: [2, 5] */
 
 const should = require('./init.js');
-const db = getSchema();    
+const expect = require('expect');
+let db = getSchema();
 const assert = require('assert');
 const Schema = require('jugglingdb').Schema;
 
@@ -452,6 +453,163 @@ describe('migrations', function() {
     it('should disconnect when done', function(done) {
         db.disconnect();
         done();
+    });
+
+    describe('autoupdate', () => {
+
+        before(() => {
+            db = getSchema();
+        });
+
+        after(() => db.disconnect());
+
+        describe('drop columns', () => {
+
+            it('should drop column when property removed from model', () => {
+                const db = getSchema();
+                db.define('Model', { a: String, b: String });
+
+                return db.automigrate()
+                    .then(() => {
+                        const props = db.models['Model'].properties;
+                        delete props.b;
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => expect(sql[0]).toBe('DROP COLUMN `b`'));
+            });
+
+        });
+
+        describe('drop indexes', () => {
+
+            it('should drop single index when removed from property', () => {
+                db.define('Model', { a: { type: String, index: true }, b: String });
+
+                return db.automigrate()
+                    .then(() => {
+                        const props = db.models['Model'].properties;
+                        delete props.a.index;
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql[0]).toBe('DROP INDEX `a`');
+                        expect(sql.length).toBe(1);
+                    });
+            });
+
+            it('should drop complex index when removed', () => {
+                db.define('Model', { a: String, b: String }, {
+                    indexes: {
+                        ixAB: { keys: [ 'a', 'b' ] }
+                    }
+                });
+
+                return db.automigrate()
+                    .then(() => {
+                        const indexes = db.models['Model'].settings.indexes;
+                        delete indexes.ixAB;
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql[0]).toBe('DROP INDEX `ixAB`');
+                        expect(sql.length).toBe(1);
+                    });
+            });
+
+            it('should drop complex index when order changed', () => {
+                db.define('Model', { a: String, b: String }, {
+                    indexes: {
+                        ixAB: { keys: [ 'b', 'a' ] }
+                    }
+                });
+
+                return db.automigrate()
+                    .then(() => {
+                        const indexes = db.models['Model'].settings.indexes;
+                        indexes.ixAB.keys = [ 'a', 'b' ];
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql.length).toBe(2);
+                        expect(sql[0]).toBe('DROP INDEX `ixAB`');
+                        expect(sql[1]).toBe('ADD  INDEX  `ixAB` (`a`, `b`)');
+                    });
+            });
+
+            it('should drop complex index when keys changed', () => {
+                db.define('Model', { a: String, b: String, c: String }, {
+                    indexes: {
+                        ixAB: { keys: [ 'a', 'b' ] }
+                    }
+                });
+
+                return db.automigrate()
+                    .then(() => {
+                        const indexes = db.models['Model'].settings.indexes;
+                        indexes.ixAB.keys = [ 'a', 'b', 'c' ];
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql.length).toBe(2);
+                        expect(sql[0]).toBe('DROP INDEX `ixAB`');
+                        expect(sql[1]).toBe('ADD  INDEX  `ixAB` (`a`, `b`, `c`)');
+                    });
+            });
+
+        });
+
+        describe('add indexes', () => {
+
+            it('should add single index when index added to property', () => {
+                db.define('Model', { a: String });
+
+                return db.automigrate()
+                    .then(() => {
+                        const props = db.models['Model'].properties;
+                        props.a.index = true;
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql[0]).toBe('ADD  INDEX `a`  (`a`) ');
+                        expect(sql.length).toBe(1);
+                    });
+            });
+
+            it('should add single index with index_type setting', () => {
+                db.define('Model', { a: String });
+
+                return db.automigrate()
+                    .then(() => {
+                        const props = db.models['Model'].properties;
+                        props.a.index = {
+                            type: 'BTREE'
+                        };
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql[0]).toBe('ADD  INDEX `a` USING BTREE (`a`) ');
+                        expect(sql.length).toBe(1);
+                    });
+            });
+
+            it('should add unique/fulltext/spatial single index', () => {
+                db.define('Model', { a: String });
+
+                return db.automigrate()
+                    .then(() => {
+                        const props = db.models['Model'].properties;
+                        props.a.index = {
+                            kind: 'UNIQUE'
+                        };
+                        return db.adapter.getAlterTableSQL('Model');
+                    })
+                    .then(sql => {
+                        expect(sql[0]).toBe('ADD UNIQUE INDEX `a`  (`a`) ');
+                        expect(sql.length).toBe(1);
+                    });
+            });
+        });
+
     });
 
 });
