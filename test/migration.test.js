@@ -494,6 +494,7 @@ describe('migrations', function() {
                     .then(sql => {
                         expect(sql[0]).toBe('DROP INDEX `a`');
                         expect(sql.length).toBe(1);
+                        return db.autoupdate();
                     });
             });
 
@@ -513,6 +514,7 @@ describe('migrations', function() {
                     .then(sql => {
                         expect(sql[0]).toBe('DROP INDEX `ixAB`');
                         expect(sql.length).toBe(1);
+                        return db.autoupdate();
                     });
             });
 
@@ -532,7 +534,8 @@ describe('migrations', function() {
                     .then(sql => {
                         expect(sql.length).toBe(2);
                         expect(sql[0]).toBe('DROP INDEX `ixAB`');
-                        expect(sql[1]).toBe('ADD  INDEX  `ixAB` (`a`, `b`)');
+                        expect(sql[1]).toBe('ADD  INDEX `ixAB`  (`a`, `b`)');
+                        return db.autoupdate();
                     });
             });
 
@@ -552,7 +555,8 @@ describe('migrations', function() {
                     .then(sql => {
                         expect(sql.length).toBe(2);
                         expect(sql[0]).toBe('DROP INDEX `ixAB`');
-                        expect(sql[1]).toBe('ADD  INDEX  `ixAB` (`a`, `b`, `c`)');
+                        expect(sql[1]).toBe('ADD  INDEX `ixAB`  (`a`, `b`, `c`)');
+                        return db.autoupdate();
                     });
             });
 
@@ -570,8 +574,9 @@ describe('migrations', function() {
                         return db.adapter.getAlterTableSQL('Model');
                     })
                     .then(sql => {
-                        expect(sql[0]).toBe('ADD  INDEX `a`  (`a`) ');
+                        expect(sql[0]).toBe('ADD  INDEX `a`  (`a`)');
                         expect(sql.length).toBe(1);
+                        return db.autoupdate();
                     });
             });
 
@@ -587,8 +592,9 @@ describe('migrations', function() {
                         return db.adapter.getAlterTableSQL('Model');
                     })
                     .then(sql => {
-                        expect(sql[0]).toBe('ADD  INDEX `a` USING BTREE (`a`) ');
+                        expect(sql[0]).toBe('ADD  INDEX `a` USING BTREE (`a`)');
                         expect(sql.length).toBe(1);
+                        return db.autoupdate();
                     });
             });
 
@@ -604,8 +610,9 @@ describe('migrations', function() {
                         return db.adapter.getAlterTableSQL('Model');
                     })
                     .then(sql => {
-                        expect(sql[0]).toBe('ADD UNIQUE INDEX `a`  (`a`) ');
+                        expect(sql[0]).toBe('ADD UNIQUE INDEX `a`  (`a`)');
                         expect(sql.length).toBe(1);
+                        return db.autoupdate();
                     });
             });
         });
