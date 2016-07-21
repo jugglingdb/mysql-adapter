@@ -599,7 +599,7 @@ describe('migrations', function() {
             });
 
             it('should add unique/fulltext/spatial single index', () => {
-                db.define('Model', { a: String });
+                db.define('Model', { a: { type: String, length: 10 } });
 
                 return db.automigrate()
                     .then(() => {
