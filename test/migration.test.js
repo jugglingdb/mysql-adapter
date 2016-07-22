@@ -659,6 +659,90 @@ describe('migrations', function() {
                         return db.autoupdate();
                     });
             });
+
+            describe('null', () => {
+
+                it('should reflect null/not null setting (allowNull)', () => {
+                    db.define('Model', { a: {
+                        type: String,
+                        allowNull: true
+                    } });
+                    const props = db.models['Model'].properties;
+                    return db.automigrate()
+                        .then(() => {
+                            props.a.allowNull = false;
+                            return db.adapter.getAlterTableSQL('Model');
+                        })
+                        .then(sql => {
+                            expect(sql[0]).toBe('CHANGE COLUMN `a` `a` VARCHAR(255) NOT NULL');
+                            return db.autoupdate();
+                        })
+                        .then(() => {
+                            props.a.allowNull = true;
+                            return db.adapter.getAlterTableSQL('Model');
+                        })
+                        .then(sql => {
+                            expect(sql[0]).toBe('CHANGE COLUMN `a` `a` VARCHAR(255) NULL');
+                        });
+                });
+
+                it('should reflect null/not null setting (null)', () => {
+                    db.define('Model', { a: {
+                        type: String,
+                        null: true
+                    } });
+                    const props = db.models['Model'].properties;
+                    return db.automigrate()
+                        .then(() => {
+                            props.a.null = false;
+                            return db.adapter.getAlterTableSQL('Model');
+                        })
+                        .then(sql => {
+                            expect(sql[0]).toBe('CHANGE COLUMN `a` `a` VARCHAR(255) NOT NULL');
+                            return db.autoupdate();
+                        })
+                        .then(() => {
+                            props.a.null = true;
+                            return db.adapter.getAlterTableSQL('Model');
+                        })
+                        .then(sql => {
+                            expect(sql[0]).toBe('CHANGE COLUMN `a` `a` VARCHAR(255) NULL');
+                        });
+                });
+
+                it('defaults to allow null', () => {
+                    db.define('Model', { a: {
+                        type: String,
+                        allowNull: false
+                    } });
+                    const props = db.models['Model'].properties;
+                    return db.automigrate()
+                        .then(() => {
+                            delete props.a.allowNull;
+                            return db.adapter.getAlterTableSQL('Model');
+                        })
+                        .then(sql => {
+                            expect(sql[0]).toBe('CHANGE COLUMN `a` `a` VARCHAR(255) NULL');
+                        });
+                });
+
+            });
+
+        });
+
+        context('not existing table', () => {
+
+            it('should report "tableMissing"', () => {
+                db.define('MissingTableName', { a: {
+                    type: String,
+                    allowNull: false
+                } });
+                return db.adapter.getTableInfo('MissingTableName')
+                    .then(info => {
+                        expect(info.tableMissing).toBe(true);
+                    });
+            });
+
         });
 
     });
