@@ -6,6 +6,7 @@
   "scripts": {
     "create-database": "mysql -u root -e 'create database myapp_test;'",
     "test": "mocha --bail --check-leaks test/",
+    "lint": "eslint lib/ test/",
     "test-coverage": "istanbul cover node_modules/.bin/_mocha -- --reporter landing --check-leaks test/",
     "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
   },
