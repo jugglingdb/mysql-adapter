@@ -1,58 +1,58 @@
 const should = require('./init.js');
 const assert = require('assert');
 
-let db, DummyModel;
+let db;
 
 /* global getSchema */
 
-describe('migrations', function() {
-    
-    before(function() {
-        db = getSchema({collation: 'utf8mb4_general_ci'});
+describe('migrations', () => {
+
+    before(() => {
+        db = getSchema({ collation: 'utf8mb4_general_ci' });
     });
 
-    it('should use utf8mb4 charset', function(done) {
-        var test_set = /utf8mb4/;
-        var test_collo = /utf8mb4_general_ci/;
-        var test_set_str = 'utf8mb4';
-        var collation = 'utf8mb4_general_ci';
-        charsetTest(test_set, test_collo, test_set_str, collation, done);
+    it('should use utf8mb4 charset', done => {
+        const charset = /utf8mb4/;
+        const collo = /utf8mb4_general_ci/;
+        const str = 'utf8mb4';
+        const collation = 'utf8mb4_general_ci';
+        charsetTest(charset, collo, str, collation, done);
     });
 
-    it('should disconnect first db', function(done) {
-        db.client.end(function(){
+    it('should disconnect first db', done => {
+        db.client.end(() => {
             db = getSchema();
             done();
         });
     });
 
-    it('should use latin1 charset', function(done) {
+    it('should use latin1 charset', done => {
 
-        var test_set = /latin1/;
-        var test_collo = /latin1_general_ci/;
-        var test_set_str = 'latin1';
-        var collation = 'latin1_general_ci';
-        charsetTest(test_set, test_collo, test_set_str, collation, done);
+        const charset = /latin1/;
+        const collo = /latin1_general_ci/;
+        const str = 'latin1';
+        const collation = 'latin1_general_ci';
+        charsetTest(charset, collo, str, collation, done);
 
     });
-    
-    it('should drop db and disconnect all', function() {
+
+    it('should drop db and disconnect all', () => {
         return db.adapter.recreateDatabase()
             .then(() => db.adapter.closeConnection());
     });
 
 });
 
-describe.skip('dropped connections', function() {
+describe.skip('dropped connections', () => {
 
-    before(function() {
+    before(() => {
         db = getSchema();
     });
 
-    it('should reconnect', function(done) {
-        db.client.on('error', function(err) {
+    it('should reconnect', done => {
+        db.client.on('error', err => {
             if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-                db.connect(function() {
+                db.connect(() => {
                     done();
                 });
                 return;
@@ -61,7 +61,7 @@ describe.skip('dropped connections', function() {
         });
 
         // Simulate a disconnect in socket
-        db.client._socket.on('timeout', function() {
+        db.client._socket.on('timeout', () => {
             db.client._socket.emit('error', {
                 message: 'Test error',
                 stack: '',
@@ -72,8 +72,8 @@ describe.skip('dropped connections', function() {
         db.client._socket.setTimeout(100);
     });
 
-    it('should use the new connection', function(done) {
-        db.adapter.query('SHOW TABLES', function(err) {
+    it('should use the new connection', done => {
+        db.adapter.query('SHOW TABLES', err => {
             should.not.exist(err);
             done();
         });
@@ -81,36 +81,38 @@ describe.skip('dropped connections', function() {
 });
 
 
-function charsetTest(test_set, test_collo, test_set_str, collation, done) {
+function charsetTest(charset, collo, str, collation, done) {
     return db.adapter.closeConnection()
         .then(() => {
-            db = getSchema({collation: collation});
-            DummyModel = db.define('DummyModel', {string: String});
-            db.automigrate(function() {
+            db = getSchema({ collation });
+            db.define('DummyModel', { string: String });
+            db.automigrate(() => {
                 const sql = 'SELECT DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ? LIMIT 1';
                 db.adapter.command(sql, [ db.settings.database ])
                     .then(response => {
                         const r = response.result;
-                        assert.ok(r[0].DEFAULT_COLLATION_NAME.match(test_collo));
+                        assert.ok(r[0].DEFAULT_COLLATION_NAME.match(collo));
                         return db.adapter.query('SHOW VARIABLES LIKE "character_set%"');
                     })
                     .then(r => {
                         let hitAll = 0;
-                        for (let result in r) {
-                            hitAll += matchResult(r[result], 'character_set_connection', test_set);
-                            hitAll += matchResult(r[result], 'character_set_database', test_set);
-                            hitAll += matchResult(r[result], 'character_set_results', test_set);
-                            hitAll += matchResult(r[result], 'character_set_client', test_set);
-                        }
+                        Object.keys(r).forEach(key => {
+                            const result = r[key];
+                            hitAll += matchResult(r[result], 'character_set_connection', charset);
+                            hitAll += matchResult(r[result], 'character_set_database', charset);
+                            hitAll += matchResult(r[result], 'character_set_results', charset);
+                            hitAll += matchResult(r[result], 'character_set_client', charset);
+                        });
                         assert.equal(hitAll, 4);
                         return db.adapter.query('SHOW VARIABLES LIKE "collation%"');
                     })
                     .then(r => {
                         let hitAll = 0;
-                        for (let result in r) {
-                            hitAll += matchResult(r[result], 'collation_connection', test_set);
-                            hitAll += matchResult(r[result], 'collation_database', test_set);
-                        }
+                        Object.keys(r).forEach(key => {
+                            const result = r[key];
+                            hitAll += matchResult(r[result], 'collation_connection', charset);
+                            hitAll += matchResult(r[result], 'collation_database', charset);
+                        });
                         assert.equal(hitAll, 2);
                         done();
                     })
@@ -119,8 +121,8 @@ function charsetTest(test_set, test_collo, test_set_str, collation, done) {
         });
 }
 
-function matchResult(result, variable_name, match) {
-    if(result.Variable_name == variable_name){
+function matchResult(result, varName, match) {
+    if (result.Variable_name === varName) {
         assert.ok(result.Value.match(match));
         return 1;
     }

@@ -1,6 +1,6 @@
-describe('mysql imported features', function() {
+describe('mysql imported features', () => {
 
-    before(function() {
+    before(() => {
         require('./init.js');
     });
 

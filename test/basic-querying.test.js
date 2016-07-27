@@ -4,7 +4,7 @@ let db, UserData;
 
 /* global getSchema */
 
-describe('basic-query-mysql', function() {
+describe('basic-query-mysql', () => {
 
     before(() => {
         return setup()
@@ -28,16 +28,16 @@ describe('basic-query-mysql', function() {
             .then(users => users.should.have.lengthOf(6));
     });
 
-    it('should query collection where order is 1 or 5', function(done) {
+    it('should query collection where order is 1 or 5', done => {
         UserData.all({
             where : {
-                or : [{
+                or : [ {
                     order : 1
                 }, {
                     order : 5
-                }]
+                } ]
             }
-        }, function(err, users) {
+        }, (err, users) => {
             should.exists(users);
             should.not.exists(err);
             users.should.have.lengthOf(2);
@@ -45,16 +45,16 @@ describe('basic-query-mysql', function() {
         });
     });
 
-    it('should query collection with given attributes array, and return array Of Objects', function(done) {
+    it('should query collection with given attributes array, and return array Of Objects', done => {
         UserData.all({
             where : {
-                or : [{
+                or : [ {
                     order : 1
                 }, {
                     order : 5
-                }]
-            }, attributes: ['id']
-        }, function(err, users) {
+                } ]
+            }, attributes: [ 'id' ]
+        }, (err, users) => {
             should.exists(users);
             should.not.exists(err);
             users.should.have.lengthOf(2);
@@ -64,16 +64,16 @@ describe('basic-query-mysql', function() {
         });
     });
 
-    it('should query collection with given attributes array, and return array ids', function(done) {
+    it('should query collection with given attributes array, and return array ids', done => {
         UserData.all({
             where : {
-                or : [{
+                or : [ {
                     order : 1
                 }, {
                     order : 5
-                }]
+                } ]
             }, attributes: 'id'
-        }, function(err, users) {
+        }, (err, users) => {
             should.exists(users);
             should.not.exists(err);
             users.should.have.lengthOf(2);
@@ -83,14 +83,14 @@ describe('basic-query-mysql', function() {
         });
     });
 
-    it('should count collection where order is 1 or 5', function(done) {
+    it('should count collection where order is 1 or 5', done => {
         UserData.count({
-            or : [{
+            or : [ {
                 order : 1
             }, {
                 order : 5
-            }]
-        }, function(err, count) {
+            } ]
+        }, (err, count) => {
             should.not.exists(err);
             should.exists(count);
             count.should.eql(2);
@@ -98,14 +98,14 @@ describe('basic-query-mysql', function() {
         });
     });
 
-    it('should query collection where name like Len', function(done) {
+    it('should query collection where name like Len', done => {
         UserData.all({
             where : {
                 name : {
                     like : '%cCa%'
                 }
             }
-        }, function(err, users) {
+        }, (err, users) => {
             should.exists(users);
             should.not.exists(err);
             users.should.have.lengthOf(1);
@@ -114,36 +114,36 @@ describe('basic-query-mysql', function() {
         });
     });
 
-    it('should query collection using or operator', function(done) {
+    it('should query collection using or operator', done => {
         UserData.all({
             where : {
-                or : [{
+                or : [ {
                     name : 'Paul McCartney'
                 }, {
                     name : 'John Lennon'
-                }]
+                } ]
             }
-        }, function(err, users) {
+        }, (err, users) => {
             should.exists(users);
             should.not.exists(err);
             users.should.have.lengthOf(2);
-            users.forEach(function(u) {
+            users.forEach(u => {
                 u.role.should.eql('lead');
             });
             done();
         });
     });
 
-    it('should query collection using or operator on different fields', function(done) {
+    it('should query collection using or operator on different fields', done => {
         UserData.all({
             where : {
-                or : [{
+                or : [ {
                     name : 'Not a User'
                 }, {
                     order : '5'
-                }]
+                } ]
             }
-        }, function(err, users) {
+        }, (err, users) => {
             should.exists(users);
             should.not.exists(err);
             users.should.have.lengthOf(1);
@@ -152,17 +152,17 @@ describe('basic-query-mysql', function() {
         });
     });
 
-    it('should query collection using or operator combined with and operator', function(done) {
+    it('should query collection using or operator combined with and operator', done => {
         UserData.all({
             where : {
                 name : 'Ringo Starr',
-                or : [{
+                or : [ {
                     role : 'lead'
                 }, {
                     order : '6'
-                }]
+                } ]
             }
-        }, function(err, users) {
+        }, (err, users) => {
             should.exists(users);
             should.not.exists(err);
             users.should.have.lengthOf(1);
@@ -171,12 +171,12 @@ describe('basic-query-mysql', function() {
         });
     });
 
-    it('should query collection using IN operation', function(done) {
+    it('should query collection using IN operation', done => {
         UserData.all({
             where: {
                 order: [ 4, 6 ]
             }
-        }, function(err, users) {
+        }, (err, users) => {
             should.not.exists(err);
             should.exist(users);
             users.should.have.lengthOf(2);
@@ -185,94 +185,96 @@ describe('basic-query-mysql', function() {
     });
 
     it('should query by null', () => {
-        return UserData.findOne({ where: { email: null }})
+        return UserData.findOne({ where: { email: null } })
             .then(user => {
                 should.not.exist(user.email);
             });
     });
 
     it('should support exclusion from empty set', () => {
-        return UserData.count({ email: { nin: [] }})
+        return UserData.count({ email: { nin: [] } })
             .then(count => {
-                count.should.equal(6); // full set
+                // full set
+                count.should.equal(6);
             });
     });
 
     it('should support exclusion from non empty set', () => {
-        return UserData.count({ order: { nin: [ 1 ] }})
+        return UserData.count({ order: { nin: [ 1 ] } })
             .then(count => {
                 count.should.equal(5);
             });
     });
 
     it('should support inclusion in empty set', () => {
-        return UserData.count({ email: { inq: [] }})
+        return UserData.count({ email: { inq: [] } })
             .then(count => {
-                count.should.equal(0); // empty set
+                // empty set
+                count.should.equal(0);
             });
     });
 
     it('should query by "gt"', () => {
-        return UserData.count({ order: { gt: 2 }})
+        return UserData.count({ order: { gt: 2 } })
             .then(count => {
                 count.should.equal(4);
             });
     });
 
     it('should query by "gte"', () => {
-        return UserData.count({ order: { gte: 2 }})
+        return UserData.count({ order: { gte: 2 } })
             .then(count => {
                 count.should.equal(5);
             });
     });
 
     it('should query by "lt"', () => {
-        return UserData.count({ order: { lt: 2 }})
+        return UserData.count({ order: { lt: 2 } })
             .then(count => {
                 count.should.equal(1);
             });
     });
 
     it('should query by "lte"', () => {
-        return UserData.count({ order: { lte: 2 }})
+        return UserData.count({ order: { lte: 2 } })
             .then(count => {
                 count.should.equal(2);
             });
     });
 
     it.skip('should query by "ne"', () => {
-        return UserData.count({ order: { ne: 2 }})
+        return UserData.count({ order: { ne: 2 } })
             .then(count => {
                 count.should.equal(5);
             });
     });
 
     it.skip('should query by using "LIKE"', () => {
-        return UserData.count({ email: { like: '%b3atl3s%' }})
+        return UserData.count({ email: { like: '%b3atl3s%' } })
             .then(count => {
                 count.should.equal(2);
             });
     });
 
     it.skip('should query by using "NLIKE"', () => {
-        return UserData.count({ email: { nlike: '%paul%' }})
+        return UserData.count({ email: { nlike: '%paul%' } })
             .then(count => {
                 count.should.equal(1);
             });
     });
 
     it('should query by using "BETWEEN"', () => {
-        return UserData.count({ order: { between: [ 3, 5 ] }})
+        return UserData.count({ order: { between: [ 3, 5 ] } })
             .then(count => {
                 count.should.equal(3);
             });
     });
 
-});  
+});
 
 
 function seed() {
-    const beatles = [{
+    const beatles = [ {
         name : 'John Lennon',
         mail : 'john@b3atl3s.co.uk',
         role : 'lead',
@@ -291,7 +293,7 @@ function seed() {
         name : 'Pete Best', order : 4
     }, {
         name : 'Stuart Sutcliffe', order : 3
-    }];
+    } ];
 
     return UserData.destroyAll()
         .then(() => UserData.create(beatles));

@@ -9,17 +9,17 @@ let db = getSchema();
 const assert = require('assert');
 const Schema = require('jugglingdb').Schema;
 
-let UserData, NumberData, DateData; 
+let UserData, NumberData, DateData;
 
-describe('migrations', function() {
+describe('migrations', () => {
 
     before(setup);
 
-    it('UserData should have correct columns', function(done) {
-        getFields('UserData', function(err, fields) {
+    it('UserData should have correct columns', done => {
+        getFields('UserData', (err, fields) => {
             should.not.exist(err);
-            assert.deepEqual(fields, {  
-                id: {  
+            assert.deepEqual(fields, {
+                id: {
                     Field:'id',
                     Type:'int(11)',
                     Null:'NO',
@@ -27,7 +27,7 @@ describe('migrations', function() {
                     Default:null,
                     Extra:'auto_increment'
                 },
-                email:{  
+                email:{
                     Field:'email',
                     Type:'varchar(100)',
                     Null:'NO',
@@ -35,7 +35,7 @@ describe('migrations', function() {
                     Default:null,
                     Extra:''
                 },
-                name:{  
+                name:{
                     Field:'name',
                     Type:'varchar(255)',
                     Null:'YES',
@@ -43,7 +43,7 @@ describe('migrations', function() {
                     Default:null,
                     Extra:''
                 },
-                bio:{  
+                bio:{
                     Field:'bio',
                     Type:'longtext',
                     Null:'YES',
@@ -51,7 +51,7 @@ describe('migrations', function() {
                     Default:null,
                     Extra:''
                 },
-                order:{  
+                order:{
                     Field:'order',
                     Type:'int(11)',
                     Null:'YES',
@@ -59,7 +59,7 @@ describe('migrations', function() {
                     Default:null,
                     Extra:''
                 },
-                birthDate:{  
+                birthDate:{
                     Field:'birthDate',
                     Type:'datetime',
                     Null:'YES',
@@ -67,7 +67,7 @@ describe('migrations', function() {
                     Default:null,
                     Extra:''
                 },
-                pendingPeriod:{  
+                pendingPeriod:{
                     Field:'pendingPeriod',
                     Type:'int(11)',
                     Null:'YES',
@@ -75,7 +75,7 @@ describe('migrations', function() {
                     Default:null,
                     Extra:''
                 },
-                createdByAdmin:{  
+                createdByAdmin:{
                     Field:'createdByAdmin',
                     Type:'tinyint(1)',
                     Null:'YES',
@@ -85,14 +85,14 @@ describe('migrations', function() {
                 }
             });
             done();
-        });    
+        });
     });
-    
-    it('UserData should have correct indexes', function(done) {
+
+    it('UserData should have correct indexes', done => {
         // Note: getIdexes truncates multi-key indexes to the first member. Hence index1 is correct.
-        getIndexes('UserData', function(err, fields) {
+        getIndexes('UserData', (err, fields) => {
             assert.deepEqual(removeTableNames(fields), {
-                PRIMARY: { 
+                PRIMARY: {
                     'Non_unique': 0,
                     'Key_name': 'PRIMARY',
                     'Seq_in_index': 1,
@@ -106,7 +106,7 @@ describe('migrations', function() {
                     'Comment': '',
                     'Index_comment': ''
                 },
-                email: { 
+                email: {
                     'Non_unique': 1,
                     'Key_name': 'email',
                     'Seq_in_index': 1,
@@ -120,7 +120,7 @@ describe('migrations', function() {
                     'Comment': '',
                     'Index_comment': ''
                 },
-                index0: { 
+                index0: {
                     'Non_unique': 1,
                     'Key_name': 'index0',
                     'Seq_in_index': 1,
@@ -133,71 +133,71 @@ describe('migrations', function() {
                     'Index_type': 'BTREE',
                     'Comment': '',
                     'Index_comment': ''
-                } 
+                }
             });
             done();
         });
 
         function removeTableNames(ixs) {
-            Object.keys(ixs).forEach(function(name) {
+            Object.keys(ixs).forEach(name => {
                 delete ixs[name].Table;
             });
             return ixs;
         }
     });
-    
-    it('StringData should have correct columns', function(done) {
-        getFields('StringData', function(err, fields) {
-            assert.deepEqual(fields, { id: 
+
+    it('StringData should have correct columns', done => {
+        getFields('StringData', (err, fields) => {
+            assert.deepEqual(fields, { id:
                { Field: 'id',
                  Type: 'int(11)',
                  Null: 'NO',
                  Key: 'PRI',
                  Default: null,
                  Extra: 'auto_increment' },
-              smallString: 
+              smallString:
                { Field: 'smallString',
                  Type: 'char(127)',
                  Null: 'NO',
                  Key: 'MUL',
                  Default: null,
                  Extra: '' },
-              mediumString: 
+              mediumString:
                { Field: 'mediumString',
                  Type: 'varchar(255)',
                  Null: 'NO',
                  Key: '',
                  Default: null,
                  Extra: '' },
-              tinyText: 
+              tinyText:
                { Field: 'tinyText',
                  Type: 'tinytext',
                  Null: 'YES',
                  Key: '',
                  Default: null,
                  Extra: '' },
-              giantJSON: 
+              giantJSON:
                { Field: 'giantJSON',
                  Type: 'longtext',
                  Null: 'YES',
                  Key: '',
                  Default: null,
                  Extra: '' },
-              text: 
+              text:
                { Field: 'text',
                  Type: 'varchar(1024)',
                  Null: 'YES',
                  Key: '',
                  Default: null,
-                 Extra: '' } 
+                 Extra: '' }
             });
             done();
         });
     });
 
-    it('NumberData should have correct columns', function(done) {
-        getFields('NumberData', function(err, fields) {
-            assert.deepEqual(fields, { 
+    it('NumberData should have correct columns', done => {
+        getFields('NumberData', (err, fields) => {
+            assert.deepEqual(fields, {
                 id: {
                     Field: 'id',
                     Type: 'int(11)',
@@ -237,15 +237,15 @@ describe('migrations', function() {
                     Key: '',
                     Default: null,
                     Extra: ''
-                } 
+                }
             });
             done();
         });
     });
 
-    it('DateData should have correct columns', function(done) {
-        getFields('DateData', function(err, fields) {
-            assert.deepEqual(fields, { 
+    it('DateData should have correct columns', done => {
+        getFields('DateData', (err, fields) => {
+            assert.deepEqual(fields, {
                 id: {
                     Field: 'id',
                     Type: 'int(11)',
@@ -269,32 +269,32 @@ describe('migrations', function() {
                     Key: '',
                     Default: null,
                     Extra: ''
-                } 
+                }
             });
             done();
         });
     });
-    
-    it('should autoupgrade', function(done) {
+
+    it('should autoupgrade', done => {
         const userExists = function(cb) {
-            query('SELECT * FROM UserData', function(err, res) {
+            query('SELECT * FROM UserData', (err, res) => {
                 cb(!err && res[0].email === 'test@example.com');
             });
         };
 
-        UserData.create({email: 'test@example.com', order: 1}, function(err, user) {
+        UserData.create({ email: 'test@example.com', order: 1 }, (err, user) => {
             assert.ok(!err, 'Could not create user');
             should.exist(user);
-            userExists(function(yep) {
+            userExists(yep => {
                 assert.ok(yep, 'User does not exist');
             });
             UserData.defineProperty('email', { type: String, length: 110 });
-            UserData.defineProperty('name', {type: String, dataType: 'char', limit: 50});
-            UserData.defineProperty('newProperty', {type: Number, unsigned: true, dataType: 'bigInt'});
+            UserData.defineProperty('name', { type: String, dataType: 'char', limit: 50 });
+            UserData.defineProperty('newProperty', { type: Number, unsigned: true, dataType: 'bigInt' });
             // UserData.defineProperty('pendingPeriod', false); This will not work as expected.
-            db.autoupdate(function(err) {
+            db.autoupdate(err => {
                 should.not.exist(err);
-                getFields('UserData', function(err, fields) {
+                getFields('UserData', (err, fields) => {
                     // change nullable for email
                     assert.equal(fields.email.Null, 'YES', 'Email does not allow null');
                     // change type of name
@@ -307,7 +307,7 @@ describe('migrations', function() {
                     // drop column - will not happen.
                     // assert.ok(!fields.pendingPeriod, 'Did not drop column pendingPeriod');
                     // user still exists
-                    userExists(function(yep) {
+                    userExists(yep => {
                         assert.ok(yep, 'User does not exist');
                         done();
                     });
@@ -317,16 +317,16 @@ describe('migrations', function() {
     });
 
     // TODO: rewrite this test
-    // it.skip('record should be single updated', function(done) {
+    // it.skip('record should be single updated', done => {
 
     //         const userExists = function(cb) {
     //             query('SELECT * FROM UserData', function(err, res) {
     //                 cb(!err && res[0].email === 'yourname@newname.com');
     //             });
     //         }
-    //         
+    //
     //         UserData.update({where:{id:'1'}, update:{ email:'yourname@newname.com' }}  , function(err, o) {
-    //             
+    //
     //             assert.equal(err,null);
 
     //             userExists(function(yep) {
@@ -336,7 +336,7 @@ describe('migrations', function() {
     //             // err when where missing
     //             UserData.update({ update:{email:'yourname@newname.com' }}, function(err, o) {
     //                 assert.equal(err, "Required where", " no error when where field is missing ");
-    //             });    
+    //             });
 
     //             // err when where update
     //             UserData.update({where:{id:'1'}}, function(err, o) {
@@ -350,15 +350,15 @@ describe('migrations', function() {
     //             });
 
     //         });
-    // });   
+    // });
 
-    // it.skip('record should be multi updated', function(done) {
+    // it.skip('record should be multi updated', done => {
 
     //     // Create second user
     //     UserData.create({email: 'helloworld-helloworld@example.com', order: 3}, function(err, user) {
     //         console.log(err);
     //         assert(!err, 'User is not created');
-    //         
+    //
     //         var userExists = function(email,id,cb) {
     //             query('SELECT * FROM UserData', function(err, res) {
     //                 cb(!err && res[id].email == email);
@@ -371,16 +371,16 @@ describe('migrations', function() {
     //             {where:{id:'2'}, update:{ email:'usertwo@newname.com' }}]  , function(err, o) {
     //             assert.equal(err, null);
 
-    //             // Verify user two email update 
+    //             // Verify user two email update
     //             userExists('userone@newname.com',0,function(yep) {
     //                     assert.ok(yep, 'Email of user one has changed');
     //             });
-    //             
-    //             // Verify user two email update 
+    //
+    //             // Verify user two email update
     //             userExists('usertwo@newname.com',1,function(yep) {
-    //                     assert.ok(yep, 'Email of user two has changed'); 
+    //                     assert.ok(yep, 'Email of user two has changed');
     //             });
-    //             
+    //
     //             UserData.create({email: 'userthreeemail@example.com',name:"ok",pendingPeriod:10, order: 5},function(e,o){
     //                 assert(!e, 'User is not created');
     //             });
@@ -390,14 +390,14 @@ describe('migrations', function() {
     //             UserData.create({email: 'userfiveemail@example.com',name:"ok",pendingPeriod:5, order: 50},function(e,o){
     //                 assert(!e, 'User is not created');
     //             });
-    //             
+    //
     //             UserData.update([{where:{pendingPeriod:{gt:9}}, update:{ bio:'expired' }}], function(err, o) {
-    //                     
+    //
     //                 // Verify that user 3 and 4's bio is expired
     //                 query('SELECT * FROM UserData where pendingPeriod > 9 ', function(err, res) {
     //                     assert.equal(res[1].bio, 'expired', 'When where greater conds bio expired');
-    //                 }); 
-    //                     
+    //                 });
+    //
     //                 // Verify that user 5 's bio is still null
     //                 query('SELECT * FROM UserData where id=5', function(err, res) {
     //                     assert.equal(res[0].bio,null,"When where greater conds bio null");
@@ -408,24 +408,24 @@ describe('migrations', function() {
     //     });
     // });
 
-    it('should check actuality of schema', function(done) {
+    it('should check actuality of schema', done => {
         // 'drop column'
-        UserData.schema.isActual(function(err, ok) {
+        UserData.schema.isActual((err, ok) => {
             assert.ok(ok, 'schema is not actual (should be)');
-            UserData.defineProperty('essay', {type: Schema.Text});
+            UserData.defineProperty('essay', { type: Schema.Text });
             // UserData.defineProperty('email', false); Can't undefine currently.
-            UserData.schema.isActual(function(err, ok) {
+            UserData.schema.isActual((err, ok) => {
                 assert.ok(!ok, 'schema is actual (shouldn\t be)');
                 done();
             });
         });
     });
-    
-    it('should allow numbers with decimals', function(done) {
-        NumberData.create({number: 1.1234567, tinyInt: 127, mediumInt: 0, floater: 99.99 }, function(err, obj) {
+
+    it('should allow numbers with decimals', done => {
+        NumberData.create({ number: 1.1234567, tinyInt: 127, mediumInt: 0, floater: 99.99 }, (err, obj) => {
             assert.ok(!err);
             assert.ok(obj);
-            NumberData.find(obj.id, function(err, found) {
+            NumberData.find(obj.id, (err, found) => {
                 assert.equal(found.number, 1.123);
                 assert.equal(found.tinyInt, 127);
                 assert.equal(found.mediumInt, 0);
@@ -434,23 +434,23 @@ describe('migrations', function() {
             });
         });
     });
-    
-    it('should allow both kinds of date columns', function(done) {
-        DateData.create({   
-            dateTime: new Date('Aug 9 1996 07:47:33 GMT'), 
+
+    it('should allow both kinds of date columns', done => {
+        DateData.create({
+            dateTime: new Date('Aug 9 1996 07:47:33 GMT'),
             timestamp: new Date('Sep 22 2007 17:12:22 GMT')
-        }, function(err, obj){
+        }, (err, obj) => {
             assert.ok(!err);
             assert.ok(obj);
-            DateData.find(obj.id, function(err, found){
+            DateData.find(obj.id, (err, found) => {
                 assert.equal(found.dateTime.toGMTString(), 'Fri, 09 Aug 1996 07:47:33 GMT');
                 assert.equal(found.timestamp.toGMTString(), 'Sat, 22 Sep 2007 17:12:22 GMT');
                 done();
             });
         });
     });
-    
-    it('should disconnect when done', function(done) {
+
+    it('should disconnect when done', done => {
         db.disconnect();
         done();
     });
@@ -763,31 +763,31 @@ function setup(done) {
         index0: {
             columns: 'email, createdByAdmin'
         }
-    }});
+    } });
 
     db.define('StringData', {
-        smallString: {type: String, null: false, index: true, dataType: 'char', limit: 127},
-        mediumString: {type: String, null: false,  dataType: 'varchar', limit: 255},
-        tinyText: {type: String, dataType: 'tinyText'},
-        giantJSON: {type: Schema.JSON, dataType: 'longText'},
-        text: {type: Schema.Text, dataType: 'varchar', limit: 1024}
+        smallString: { type: String, null: false, index: true, dataType: 'char', limit: 127 },
+        mediumString: { type: String, null: false,  dataType: 'varchar', limit: 255 },
+        tinyText: { type: String, dataType: 'tinyText' },
+        giantJSON: { type: Schema.JSON, dataType: 'longText' },
+        text: { type: Schema.Text, dataType: 'varchar', limit: 1024 }
     });
-    
+
     NumberData = db.define('NumberData', {
-        number: {type: Number, null: false, index: true, unsigned: true, dataType: 'decimal', precision: 10, scale: 3},
-        tinyInt: {type: Number, dataType: 'tinyInt', display: 2},
-        mediumInt: {type: Number, dataType: 'mediumInt', unsigned: true},
-        floater: {type: Number, dataType: 'double', precision: 14, scale: 6}
+        number: { type: Number, null: false, index: true, unsigned: true, dataType: 'decimal', precision: 10, scale: 3 },
+        tinyInt: { type: Number, dataType: 'tinyInt', display: 2 },
+        mediumInt: { type: Number, dataType: 'mediumInt', unsigned: true },
+        floater: { type: Number, dataType: 'double', precision: 14, scale: 6 }
     });
-        
+
     DateData = db.define('DateData', {
-        dateTime: {type: Date, dataType: 'datetime'},
-        timestamp: {type: Date, dataType: 'timestamp'}
+        dateTime: { type: Date, dataType: 'datetime' },
+        timestamp: { type: Date, dataType: 'timestamp' }
     });
 
-    blankDatabase(db, function() {
+    blankDatabase(db, () => {
 
-        db.automigrate(function(err){
+        db.automigrate(err => {
             done(err);
         });
 
@@ -805,34 +805,34 @@ function blankDatabase(db, cb) {
     const cs = db.settings.charset;
     const co = db.settings.collation;
 
-    query('DROP DATABASE IF EXISTS ' + dbn, function(err) {
+    query('DROP DATABASE IF EXISTS ' + dbn, err => {
         if (err) {
             return cb(err);
         }
 
         let q = 'CREATE DATABASE ' + dbn;
 
-        if(cs){
+        if (cs) {
             q += ' CHARACTER SET ' + cs;
         }
 
-        if(co){
+        if (co) {
             q += ' COLLATE ' + co;
         }
 
-        query(q, function() {
-            query('USE '+ dbn, cb);
+        query(q, () => {
+            query('USE ' + dbn, cb);
         });
     });
 }
 
 function getFields(model, cb) {
-    query('SHOW FIELDS FROM ' + model, function(err, res) {
+    query('SHOW FIELDS FROM ' + model, (err, res) => {
         if (err) {
             cb(err);
         } else {
             const fields = {};
-            res.forEach(function(field){
+            res.forEach(field => {
                 fields[field.Field] = field;
             });
             cb(err, fields);
@@ -841,14 +841,14 @@ function getFields(model, cb) {
 }
 
 function getIndexes(model, cb) {
-    query('SHOW INDEXES FROM ' + model, function(err, res) {
+    query('SHOW INDEXES FROM ' + model, (err, res) => {
         if (err) {
             //console.log(err);
             cb(err);
         } else {
             const indexes = {};
             // Note: this will only show the first key of compound keys
-            res.forEach(function(index) {
+            res.forEach(index => {
                 if (parseInt(index.Seq_in_index, 10) === 1) {
                     indexes[index.Key_name] = index;
                 }

@@ -2,10 +2,10 @@ require('./init.js');
 const assert = require('assert');
 const expect = require('expect');
 
-/* global getSchema */ 
+/* global getSchema */
 /* eslint max-nested-callbacks: [2, 5] */
 
-describe('MySQL specific datatypes', function() {
+describe('MySQL specific datatypes', () => {
 
     let db;
 
@@ -56,7 +56,7 @@ describe('MySQL specific datatypes', function() {
                 .then(obj => {
                     assert.equal(obj.condition, 'sleepy');
                     return EnumModel.findOne({
-                        where: {animal: ANIMAL_ENUM.CAT}
+                        where: { animal: ANIMAL_ENUM.CAT }
                     });
                 })
                 .then(found => {

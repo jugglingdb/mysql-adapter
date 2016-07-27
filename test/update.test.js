@@ -26,13 +26,13 @@ describe('update', () => {
     context('single update', () => {
 
         it('should throw when no sufficient params provided', () => {
-            return Model.update({ where: { foo: 1 }})
+            return Model.update({ where: { foo: 1 } })
                 .then(() => { throw new Error('Unexpected success'); })
                 .catch(err => expect(err.message).toBe('Required update'));
         });
 
         it('should throw when no sufficient params provided', () => {
-            return Model.update({ update: { foo: 1 }})
+            return Model.update({ update: { foo: 1 } })
                 .then(() => { throw new Error('Unexpected success'); })
                 .catch(err => expect(err.message).toBe('Required where'));
         });
@@ -46,12 +46,12 @@ describe('update', () => {
                     update: { bar: 2 },
                     where: { foo: 'fuu' }
                 }))
-                .then(() => Model.all({ where: { foo: 'fuu' }}))
+                .then(() => Model.all({ where: { foo: 'fuu' } }))
                 .then(records => {
                     expect(records.length).toBe(1);
                     expect(records[0].bar).toBe(2);
                 })
-                .then(() => Model.all({ where: { foo: 'baz' }}))
+                .then(() => Model.all({ where: { foo: 'baz' } }))
                 .then(records => {
                     expect(records.length).toBe(1);
                     expect(records[0].bar).toBe(1);
