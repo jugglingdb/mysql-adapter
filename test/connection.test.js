@@ -98,10 +98,10 @@ function charsetTest(charset, collo, str, collation, done) {
                         let hitAll = 0;
                         Object.keys(r).forEach(key => {
                             const result = r[key];
-                            hitAll += matchResult(r[result], 'character_set_connection', charset);
-                            hitAll += matchResult(r[result], 'character_set_database', charset);
-                            hitAll += matchResult(r[result], 'character_set_results', charset);
-                            hitAll += matchResult(r[result], 'character_set_client', charset);
+                            hitAll += matchResult(result, 'character_set_connection', charset);
+                            hitAll += matchResult(result, 'character_set_database', charset);
+                            hitAll += matchResult(result, 'character_set_results', charset);
+                            hitAll += matchResult(result, 'character_set_client', charset);
                         });
                         assert.equal(hitAll, 4);
                         return db.adapter.query('SHOW VARIABLES LIKE "collation%"');
@@ -110,8 +110,8 @@ function charsetTest(charset, collo, str, collation, done) {
                         let hitAll = 0;
                         Object.keys(r).forEach(key => {
                             const result = r[key];
-                            hitAll += matchResult(r[result], 'collation_connection', charset);
-                            hitAll += matchResult(r[result], 'collation_database', charset);
+                            hitAll += matchResult(result, 'collation_connection', charset);
+                            hitAll += matchResult(result, 'collation_database', charset);
                         });
                         assert.equal(hitAll, 2);
                         done();
