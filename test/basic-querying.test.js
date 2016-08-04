@@ -31,11 +31,11 @@ describe('basic-query-mysql', () => {
     it('should query collection where order is 1 or 5', done => {
         UserData.all({
             where : {
-                or : [ {
+                or : [{
                     order : 1
                 }, {
                     order : 5
-                } ]
+                }]
             }
         }, (err, users) => {
             should.exists(users);
@@ -48,12 +48,12 @@ describe('basic-query-mysql', () => {
     it('should query collection with given attributes array, and return array Of Objects', done => {
         UserData.all({
             where : {
-                or : [ {
+                or : [{
                     order : 1
                 }, {
                     order : 5
-                } ]
-            }, attributes: [ 'id' ]
+                }]
+            }, attributes: ['id']
         }, (err, users) => {
             should.exists(users);
             should.not.exists(err);
@@ -67,11 +67,11 @@ describe('basic-query-mysql', () => {
     it('should query collection with given attributes array, and return array ids', done => {
         UserData.all({
             where : {
-                or : [ {
+                or : [{
                     order : 1
                 }, {
                     order : 5
-                } ]
+                }]
             }, attributes: 'id'
         }, (err, users) => {
             should.exists(users);
@@ -85,11 +85,11 @@ describe('basic-query-mysql', () => {
 
     it('should count collection where order is 1 or 5', done => {
         UserData.count({
-            or : [ {
+            or : [{
                 order : 1
             }, {
                 order : 5
-            } ]
+            }]
         }, (err, count) => {
             should.not.exists(err);
             should.exists(count);
@@ -117,11 +117,11 @@ describe('basic-query-mysql', () => {
     it('should query collection using or operator', done => {
         UserData.all({
             where : {
-                or : [ {
+                or : [{
                     name : 'Paul McCartney'
                 }, {
                     name : 'John Lennon'
-                } ]
+                }]
             }
         }, (err, users) => {
             should.exists(users);
@@ -137,11 +137,11 @@ describe('basic-query-mysql', () => {
     it('should query collection using or operator on different fields', done => {
         UserData.all({
             where : {
-                or : [ {
+                or : [{
                     name : 'Not a User'
                 }, {
                     order : '5'
-                } ]
+                }]
             }
         }, (err, users) => {
             should.exists(users);
@@ -156,11 +156,11 @@ describe('basic-query-mysql', () => {
         UserData.all({
             where : {
                 name : 'Ringo Starr',
-                or : [ {
+                or : [{
                     role : 'lead'
                 }, {
                     order : '6'
-                } ]
+                }]
             }
         }, (err, users) => {
             should.exists(users);
@@ -174,7 +174,7 @@ describe('basic-query-mysql', () => {
     it('should query collection using IN operation', done => {
         UserData.all({
             where: {
-                order: [ 4, 6 ]
+                order: [4, 6]
             }
         }, (err, users) => {
             should.not.exists(err);
@@ -200,7 +200,7 @@ describe('basic-query-mysql', () => {
     });
 
     it('should support exclusion from non empty set', () => {
-        return UserData.count({ order: { nin: [ 1 ] } })
+        return UserData.count({ order: { nin: [1] } })
             .then(count => {
                 count.should.equal(5);
             });
@@ -264,7 +264,7 @@ describe('basic-query-mysql', () => {
     });
 
     it('should query by using "BETWEEN"', () => {
-        return UserData.count({ order: { between: [ 3, 5 ] } })
+        return UserData.count({ order: { between: [3, 5] } })
             .then(count => {
                 count.should.equal(3);
             });
@@ -274,7 +274,7 @@ describe('basic-query-mysql', () => {
 
 
 function seed() {
-    const beatles = [ {
+    const beatles = [{
         name : 'John Lennon',
         mail : 'john@b3atl3s.co.uk',
         role : 'lead',
@@ -293,25 +293,26 @@ function seed() {
         name : 'Pete Best', order : 4
     }, {
         name : 'Stuart Sutcliffe', order : 3
-    } ];
+    }];
 
     return UserData.destroyAll()
         .then(() => UserData.create(beatles));
-}
-
-function setup() {
-    db = getSchema();
-    return blankDatabase(db);
 }
 
 const blankDatabase = function(db) {
     const dbn = db.settings.database;
     const cs = db.settings.charset;
     const co = db.settings.collation;
-    return db.adapter.command('DROP DATABASE IF EXISTS ??', [ dbn ])
+    return db.adapter.command('DROP DATABASE IF EXISTS ??', [dbn])
         .then(() => {
             const sql = 'CREATE DATABASE ?? CHARACTER SET ? COLLATE ?';
-            return db.adapter.command(sql, [ dbn, cs, co ]);
+            return db.adapter.command(sql, [dbn, cs, co]);
         })
         .then(() => db.adapter.command('USE ' + dbn));
 };
+
+function setup() {
+    db = getSchema();
+    return blankDatabase(db);
+}
+

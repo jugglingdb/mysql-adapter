@@ -501,7 +501,7 @@ describe('migrations', () => {
             it('should drop complex index when removed', () => {
                 db.define('Model', { a: String, b: String }, {
                     indexes: {
-                        ixAB: { keys: [ 'a', 'b' ] }
+                        ixAB: { keys: ['a', 'b'] }
                     }
                 });
 
@@ -521,14 +521,14 @@ describe('migrations', () => {
             it('should drop complex index when order changed', () => {
                 db.define('Model', { a: String, b: String }, {
                     indexes: {
-                        ixAB: { keys: [ 'b', 'a' ] }
+                        ixAB: { keys: ['b', 'a'] }
                     }
                 });
 
                 return db.automigrate()
                     .then(() => {
                         const indexes = db.models['Model'].settings.indexes;
-                        indexes.ixAB.keys = [ 'a', 'b' ];
+                        indexes.ixAB.keys = ['a', 'b'];
                         return db.adapter.getAlterTableSQL('Model');
                     })
                     .then(sql => {
@@ -542,14 +542,14 @@ describe('migrations', () => {
             it('should drop complex index when keys changed', () => {
                 db.define('Model', { a: String, b: String, c: String }, {
                     indexes: {
-                        ixAB: { keys: [ 'a', 'b' ] }
+                        ixAB: { keys: ['a', 'b'] }
                     }
                 });
 
                 return db.automigrate()
                     .then(() => {
                         const indexes = db.models['Model'].settings.indexes;
-                        indexes.ixAB.keys = [ 'a', 'b', 'c' ];
+                        indexes.ixAB.keys = ['a', 'b', 'c'];
                         return db.adapter.getAlterTableSQL('Model');
                     })
                     .then(sql => {
@@ -795,10 +795,10 @@ function setup(done) {
 
 }
 
-const query = function(sql, cb) {
+function query(sql, cb) {
     db.adapter.query(sql)
         .then(r => cb(null, r), cb);
-};
+}
 
 function blankDatabase(db, cb) {
     const dbn = db.settings.database;

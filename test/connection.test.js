@@ -88,7 +88,7 @@ function charsetTest(charset, collo, str, collation, done) {
             db.define('DummyModel', { string: String });
             db.automigrate(() => {
                 const sql = 'SELECT DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ? LIMIT 1';
-                db.adapter.command(sql, [ db.settings.database ])
+                db.adapter.command(sql, [db.settings.database])
                     .then(response => {
                         const r = response.result;
                         assert.ok(r[0].DEFAULT_COLLATION_NAME.match(collo));
